@@ -9,9 +9,10 @@ namespace SideCraft.Terrain.MaterialData {
     class Stone:MaterialData {
 
         private int durability;
+        private int maxDurability;
 
         public Stone() {
-            this.durability = getCurrentDurability();
+            this.durability = getMaxDurability();
         }
         
         public int getId() {
@@ -19,7 +20,7 @@ namespace SideCraft.Terrain.MaterialData {
         }
 
         public int getMaxStackSize() {
-            return MaterialStack.DEFAULT_STACK_SIZE;;
+            return MaterialStack.DEFAULT_STACK_SIZE;
         }
 
         public Texture2D getTexture() {

@@ -16,24 +16,24 @@ namespace SideCraft {
         public Vector2 MapPosition;
         public Vector2 startMapPosition;
         public Vector2 ScreenPosition;
+        private Vector2 speed;
+        private Rectangle recPos;
 
         private Toolbar toolbar;
         private PlayerInventory inventory;
 
         private Texture2D texture;
-        private Vector2 speed;
 
         private static Int64 milliseconds = 0;
         private float interval = 250f;
 
         private double originalY;
 
-        private Rectangle recPos;
+
 
         private MovementState moveState;
    
-
-        const double JUMP_HEIGHT = 1;
+        const double JUMP_HEIGHT = 1.3;
 
         private static MouseState oldState;
 
@@ -53,12 +53,14 @@ namespace SideCraft {
         }
 
         public Player(Vector2 p) {
-            MapPosition = p;
             startMapPosition = p;
             ScreenPosition = new Vector2(384, 160);
+            
             oldState = Mouse.GetState();
+            
             toolbar = new Toolbar();
             inventory = new PlayerInventory();
+            
             moveState = MovementState.Walking;
 
             recPos = new Rectangle((int)startMapPosition.X, (int)startMapPosition.Y, 32, 64);

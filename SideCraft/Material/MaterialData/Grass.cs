@@ -19,7 +19,7 @@ namespace SideCraft.Terrain.MaterialData {
         }
 
         public int getMaxStackSize() {
-            return MaterialStack.DEFAULT_STACK_SIZE;;
+            return MaterialStack.DEFAULT_STACK_SIZE;
         }
 
         public Texture2D getTexture() {
