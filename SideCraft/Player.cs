@@ -30,9 +30,10 @@ namespace SideCraft {
 
         private Rectangle recPos;
 
-        private State state;
+        private MovementState moveState;
+   
 
-        const int JUMP_HEIGHT = 1;
+        const double JUMP_HEIGHT = 1;
 
         private static MouseState oldState;
 
@@ -40,9 +41,15 @@ namespace SideCraft {
 
         public Coordinates coordinates = new Coordinates(0, 0);
 
-        enum State {
+        enum MovementState {
             Walking,
-            Jumping
+            Jumping,
+            Falling
+        }
+
+        enum actionState {
+            Idle,
+            Breaking
         }
 
         public Player(Vector2 p) {
@@ -52,7 +59,7 @@ namespace SideCraft {
             oldState = Mouse.GetState();
             toolbar = new Toolbar();
             inventory = new PlayerInventory();
-            state = State.Walking;
+            moveState = MovementState.Walking;
 
             recPos = new Rectangle((int)startMapPosition.X, (int)startMapPosition.Y, 32, 64);
         }
@@ -98,6 +105,14 @@ namespace SideCraft {
                     }
                 }
             }
+            else if (Mouse.GetState().RightButton == ButtonState.Pressed) {
+                Coordinates mouseCoords = util.getCoordinates(new Vector2(Mouse.GetState().X, Mouse.GetState().Y));
+                Block block = world.getBlockAt(mouseCoords);
+
+                if (block.getType() is Air && block != world.getBlockAt(this.coordinates) && block != world.getBlockAt(new Coordinates(coordinates.getX(), coordinates.getY() + 1))) {
+                    block.setType(new Stone());
+                }
+            }
         }
 
         private void updateMovement(GameTime gameTime) {
@@ -107,35 +122,40 @@ namespace SideCraft {
             if (kbState.IsKeyDown(Keys.A) || kbState.IsKeyDown(Keys.S)) {
                 speed.X = -300 * (float)gameTime.ElapsedGameTime.TotalSeconds;
 
-                Block block = world.getBlockAt(new Coordinates(coordinates.getX() - 0.4, coordinates.getY()));
+                Block feet = world.getBlockAt(new Coordinates(Math.Ceiling(coordinates.getX() - 1.15), coordinates.getY()));
+                Block head = world.getBlockAt(new Coordinates(Math.Ceiling(coordinates.getX() - 1.15), coordinates.getY() + 1));
 
-                if (block.getTypeId() != Game1.AIR) {
+                if (feet.getTypeId() != Game1.AIR || head.getTypeId() != Game1.AIR) {
                     speed.X = 0;
                 }
             }
             else if (kbState.IsKeyDown(Keys.W) || kbState.IsKeyDown(Keys.D)) {
                 speed.X = 300 * (float)gameTime.ElapsedGameTime.TotalSeconds;
 
-                Block block = world.getBlockAt(new Coordinates(coordinates.getX() + 1, coordinates.getY()));
-
-                if (block.getTypeId() != Game1.AIR) {
+                Block feet = world.getBlockAt(new Coordinates(Math.Floor(coordinates.getX() + 0.7), coordinates.getY()));
+                Block head = world.getBlockAt(new Coordinates(Math.Floor(coordinates.getX() + 0.7), Math.Floor(coordinates.getY() + 1)));
+       
+                if (feet.getTypeId() != Game1.AIR || head.getTypeId() != Game1.AIR) {
                     speed.X = 0;
                 }
             }
             else
                 speed.X = 0;
 
-            if (state == State.Walking) {
+            Coordinates leftFoot = new Coordinates(coordinates.getX(), Math.Ceiling(coordinates.getY() - 1));
+            Coordinates rightFoot = new Coordinates(coordinates.getX() + 0.5, Math.Ceiling(coordinates.getY() - 1));
+            Coordinates rightEar = new Coordinates(coordinates.getX() + 0.5, Math.Floor(coordinates.getY() + 2));
+            Coordinates leftEar = new Coordinates(coordinates.getX(), Math.Floor(coordinates.getY() + 2));
 
-                Coordinates leftFoot = new Coordinates(coordinates.getX() + 0.5, coordinates.getY());
-                Coordinates rightFoot = util.getCoordinates(new Vector2(recPos.Center.X + 16, recPos.Center.Y + 32));
-                
-                if (world.getBlockAt(new Coordinates(coordinates.getX(), Math.Ceiling(coordinates.getY()) - 1)).getType() is Air) {
+            if (moveState != MovementState.Jumping) {
+
+                //if (world.getBlockAt(new Coordinates(coordinates.getX(), Math.Ceiling(coordinates.getY()) - 1)).getType() is Air) {
+                if((world.getBlockAt(leftFoot).getType() is Air && world.getBlockAt(rightFoot).getType() is Air) || coordinates.getY() % 1 != 0){ 
                     speed.Y = -4;
                 }
-                else if (Keyboard.GetState().IsKeyDown(Keys.Space)) {
+                else if (moveState == MovementState.Walking && Keyboard.GetState().IsKeyDown(Keys.Space) && !(world.getBlockAt(leftFoot).getType() is Air) && !(world.getBlockAt(rightFoot).getType() is Air)) {
                     speed.Y = 4;
-                    state = State.Jumping;
+                    moveState = MovementState.Jumping;
                     originalY = coordinates.getY();
                 }
                 else {
@@ -144,8 +164,8 @@ namespace SideCraft {
 
             }
 
-            if (state == State.Jumping && coordinates.getY() - this.originalY >= JUMP_HEIGHT) {
-                state = State.Walking;
+            if (moveState == MovementState.Jumping && ((coordinates.getY() - this.originalY >= JUMP_HEIGHT) || !(world.getBlockAt(rightEar).getType() is Air) || !(world.getBlockAt(leftEar).getType() is Air))) {
+                moveState = MovementState.Walking;
                 originalY = 0;
             }
 
@@ -162,7 +182,7 @@ namespace SideCraft {
         public void Draw(SpriteBatch spriteBatch) {
             spriteBatch.Draw(texture, ScreenPosition, Color.White);
             spriteBatch.Draw(getInventory().getAt(0, getToolbar().getCurrentIndex()).getType().getTexture(), new Vector2(ScreenPosition.X + 20, ScreenPosition.Y + 10), Color.White);
-            spriteBatch.Draw(Game1.selectionTile, recPos, Color.Red);
+            //spriteBatch.Draw(Game1.selectionTile, recPos, Color.Red);
             toolbar.Draw(spriteBatch);
         }
 

@@ -5,9 +5,9 @@ Content\iron_ore.xnb
 Content\stone.xnb
 Content\goodguy_right.xnb
 Content\steve.xnb
-Content\CourierNew.xnb
 Content\stick.xnb
 Content\Mouse\selection.xnb
 Content\background.xnb
 Content\UIContent\Toolbar.xnb
 Content\UIContent\ToolbarSelector.xnb
+Content\CourierNew.xnb

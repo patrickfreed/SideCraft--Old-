@@ -10,11 +10,15 @@ namespace SideCraft.Inventory {
 
         private MaterialStack[,] contents;
 
+        const int COLUMNS = 5;
+        const int ROWS = 4;
+
         public PlayerInventory() {
-            contents = new MaterialStack[3, 4];
+            contents = new MaterialStack[COLUMNS, ROWS];
+            contents[0, 0] = new MaterialStack(new Stone(), 1);
         }
 
-        public MaterialStack getAt(int row, int column) {
+        public MaterialStack getAt(int row, int column) {    
             if (contents[column, row] != null) {
                 return contents[column, row];
             }
@@ -37,6 +41,17 @@ namespace SideCraft.Inventory {
             if (newc.GetLength(0) == contents.GetLength(0) && newc.GetLength(1) == contents.GetLength(1)) {
                 this.contents = newc;
             }
+        }
+
+        public int[] getIndex(MaterialStack stack) {
+            for(int x = 0; x < contents.GetLength(0); x++){
+                for (int y = 0; y < contents.GetLength(1); y++) {
+                    if(contents[x,y].getType().getId() == stack.getType().getId()){
+                        return new int[] {x,y};
+                    }
+                }
+            }
+            return new int[]{-1, -1};
         }
     }
 }

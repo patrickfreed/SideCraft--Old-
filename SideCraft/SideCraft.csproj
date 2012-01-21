@@ -132,7 +132,8 @@
       <DependentUpon>SideCraftMainMenu.cs</DependentUpon>
     </Compile>
     <Compile Include="UI\Toolbar.cs" />
-    <Compile Include="Util.cs" />
+    <Compile Include="util\Event.cs" />
+    <Compile Include="util\Util.cs" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="Game.ico" />

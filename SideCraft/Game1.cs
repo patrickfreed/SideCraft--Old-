@@ -20,8 +20,6 @@ namespace SideCraft {
         public const int IRON_ORE = 3;
         public const int AIR = 4;
 
-        public static bool onMenu = true;
-
         public static Player player;
 
         private SpriteFont font;
@@ -92,7 +90,7 @@ namespace SideCraft {
                 if (Math.Abs(mouseCoords.getX() - player.coordinates.getX()) <= 4 && Math.Abs(mouseCoords.getY() - player.coordinates.getY()) <= 4)
                     spriteBatch.Draw(selectionTile, player.world.getBlockAt(mouseCoords).location, Color.White);
 
-                spriteBatch.DrawString(font, "X: " + ((player.coordinates.getX())).ToString() + Environment.NewLine + "Y: " + player.coordinates.getY().ToString() + Environment.NewLine + "Mouse X: " + mouseCoords.getX() + Environment.NewLine + "Mouse Y: " + mouseCoords.getY() + Environment.NewLine + "MousePos.X: " + Mouse.GetState().X + Environment.NewLine + Mouse.GetState().Y, new Vector2(10, 10), Color.Black);
+                //spriteBatch.DrawString(font, "X: " + ((player.coordinates.getX())).ToString() + Environment.NewLine + "Y: " + player.coordinates.getY().ToString() + Environment.NewLine + "Mouse X: " + mouseCoords.getX() + Environment.NewLine + "Mouse Y: " + mouseCoords.getY() + Environment.NewLine + "MousePos.X: " + Mouse.GetState().X + Environment.NewLine + Mouse.GetState().Y, new Vector2(10, 10), Color.Black);
                 spriteBatch.DrawString(font, "0", util.getPosition(new Coordinates(0,0)), Color.Black);
                 
                 player.Draw(spriteBatch);
