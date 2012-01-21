@@ -9,8 +9,10 @@ namespace SideCraft.Terrain.MaterialData {
     class IronOre:MaterialData {
 
         private int durability;
+        private int maxDurability;
 
         public IronOre() {
+            this.maxDurability = 45;
             this.durability = getMaxDurability();
         }
         
@@ -33,7 +35,7 @@ namespace SideCraft.Terrain.MaterialData {
 
 
         public int getMaxDurability() {
-            return 45;
+            return this.maxDurability;
         }
 
         public int getCurrentDurability() {

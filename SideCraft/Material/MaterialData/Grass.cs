@@ -9,8 +9,10 @@ namespace SideCraft.Terrain.MaterialData {
     class Grass:MaterialData {
 
         private int durability;
+        private int maxDurability;
 
         public Grass() {
+            this.maxDurability = 15;
             durability = getMaxDurability();
         }
         
@@ -33,7 +35,7 @@ namespace SideCraft.Terrain.MaterialData {
 
 
         public int getMaxDurability() {
-            return 15;
+            return this.maxDurability;
         }
 
         public int getCurrentDurability() {

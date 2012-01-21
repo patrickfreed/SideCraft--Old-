@@ -29,7 +29,7 @@ namespace SideCraft {
 
         public static Dictionary<String, World> worlds = new Dictionary<String, World>();
 
-        GraphicsDeviceManager graphics;
+        public static GraphicsDeviceManager graphics;
         SpriteBatch spriteBatch;
 
         public Game1() {
@@ -39,6 +39,7 @@ namespace SideCraft {
        
         protected override void Initialize() {
             IsMouseVisible = true;
+            Window.AllowUserResizing = true;
 
             base.Initialize();
         }
@@ -48,7 +49,7 @@ namespace SideCraft {
 
             font = Content.Load<SpriteFont>("CourierNew");
 
-            player = new Player(new Vector2(388, 192));
+            player = new Player();
             player.LoadContent(Content.Load<Texture2D>("steve"));
 
             World world = new World(new Dictionary<string,Block>(), "world");

@@ -16,8 +16,9 @@ namespace SideCraft {
         public Vector2 MapPosition;
         public Vector2 startMapPosition;
         public Vector2 ScreenPosition;
+        public Vector2 startScreenPosition;
         private Vector2 speed;
-        private Rectangle recPos;
+        public Rectangle recPos;
 
         private Toolbar toolbar;
         private PlayerInventory inventory;
@@ -28,8 +29,6 @@ namespace SideCraft {
         private float interval = 250f;
 
         private double originalY;
-
-
 
         private MovementState moveState;
    
@@ -52,18 +51,18 @@ namespace SideCraft {
             Breaking
         }
 
-        public Player(Vector2 p) {
-            startMapPosition = p;
-            ScreenPosition = new Vector2(384, 160);
-            
+        public Player() {
+            startMapPosition = new Vector2(388, 224);
+            ScreenPosition = new Vector2(384, 192);
+            startScreenPosition = ScreenPosition;
+            recPos = new Rectangle((int)startMapPosition.X, (int)startMapPosition.Y, 32, 64);
+
             oldState = Mouse.GetState();
             
             toolbar = new Toolbar();
             inventory = new PlayerInventory();
             
             moveState = MovementState.Walking;
-
-            recPos = new Rectangle((int)startMapPosition.X, (int)startMapPosition.Y, 32, 64);
         }
 
         public void LoadContent(Texture2D t) {
@@ -184,7 +183,6 @@ namespace SideCraft {
         public void Draw(SpriteBatch spriteBatch) {
             spriteBatch.Draw(texture, ScreenPosition, Color.White);
             spriteBatch.Draw(getInventory().getAt(0, getToolbar().getCurrentIndex()).getType().getTexture(), new Vector2(ScreenPosition.X + 20, ScreenPosition.Y + 10), Color.White);
-            //spriteBatch.Draw(Game1.selectionTile, recPos, Color.Red);
             toolbar.Draw(spriteBatch);
         }
 

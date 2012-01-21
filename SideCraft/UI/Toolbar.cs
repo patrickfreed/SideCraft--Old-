@@ -12,13 +12,15 @@ namespace SideCraft.UI {
         private MaterialData[] objects = new MaterialData[4];
         private int currentIndex;
 
-        private Vector2 location = new Vector2(315, 425);
-       
-        private Rectangle BOX_ONE = new Rectangle(322, 432, 30, 30);
-        private Rectangle BOX_TWO = new Rectangle(327,432, 30, 30);
-        private Rectangle BOX_THREE = new Rectangle(332, 432, 30, 30);
-        private Rectangle BOX_FOUR = new Rectangle(337, 432, 30, 30);
-        private Rectangle BOX_FIVE = new Rectangle(342, 432, 30, 30);
+        private Vector2 location = new Vector2(315, 400);
+
+        const int Y = 400;
+
+        private Rectangle BOX_ONE = new Rectangle(322, Y, 30, 30);
+        private Rectangle BOX_TWO = new Rectangle(327,Y, 30, 30);
+        private Rectangle BOX_THREE = new Rectangle(332, Y, 30, 30);
+        private Rectangle BOX_FOUR = new Rectangle(337, Y, 30, 30);
+        private Rectangle BOX_FIVE = new Rectangle(342, Y, 30, 30);
 
         private Rectangle[] boxes;
     
@@ -40,9 +42,11 @@ namespace SideCraft.UI {
         }
 
         public void Draw(SpriteBatch spriteBatch) {
+            location = Util.getUpdatedPosition(location);
             spriteBatch.Draw(Game1.toolbarTile, location, Color.White);
 
             for (int x = 0; x < boxes.Length; x++) {
+                boxes[x] = Util.getUpdatedRectangle(boxes[x]);
                 spriteBatch.Draw(Game1.player.getInventory().getAt(0, x).getType().getTexture(), boxes[x], Color.White);
             }
         }
