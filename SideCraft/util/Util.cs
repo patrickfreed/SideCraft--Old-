@@ -15,47 +15,36 @@ namespace SideCraft {
         const int IRON_ORE = 3;
         const int AIR = 4;
 
-        public Vector2 getPosition(Coordinates coordinates) {
-            float x = (float)((coordinates.getX()  - Game1.player.coordinates.getX()) * 32) + Game1.player.startMapPosition.X;
-            float y = (float)(((coordinates.getY() - Game1.player.coordinates.getY()) * 32) - Game1.player.startMapPosition.Y) * -1;
+        public static Vector2 getPosition(Location coordinates) {
+            float x = (float)((coordinates.getX()  - SideCraft.player.coordinates.getX()) * 32) + SideCraft.player.ScreenPosition.X;
+            //float y = (float)(SideCraft.player.startMapPosition.Y - (coordinates.getY() - SideCraft.player.coordinates.getY()) * 32);
+            double y = SideCraft.player.ScreenPosition.Y - ((coordinates.getY() - SideCraft.player.coordinates.getY()) * 32);
 
-            return new Vector2(x, y);
+            return new Vector2(x, (float)y);
         }
 
-        public Coordinates getCoordinates(Vector2 position) {
-            double x = (double)(position.X - Game1.player.startMapPosition.X) / 32 + Game1.player.coordinates.getX();
-            double y = (((position.Y - Game1.player.startMapPosition.Y) / 32) * -1) + Game1.player.coordinates.getY() + 1;
+        public static Rectangle getRectangle(Location coordinates, int width, int height, bool updateSize) {
+            Vector2 pos = getPosition(coordinates);
+            
+            int x = (int)pos.X;
+            int y = (int)pos.Y;
 
-            return new Coordinates(x,y);
+           // int x = (int)(((coordinates.getX() - SideCraft.player.coordinates.getX()) * 32) + SideCraft.player.startMapPosition.X);
+           // int y = (int)(((coordinates.getY() - SideCraft.player.coordinates.getY()) * 32) - SideCraft.player.startMapPosition.Y) * -1;
+
+            if (updateSize) {
+                return new Rectangle(x, y, width * (800 / SideCraft.graphics.GraphicsDevice.Viewport.Width), width * (480 / SideCraft.graphics.GraphicsDevice.Viewport.Height));
+            }
+            else {
+                return new Rectangle(x, y, width, height);
+            }
         }
 
-        public static Vector2 getUpdatedPosition(Vector2 oldPosition) {
-            Rectangle window = Game1.graphics.GraphicsDevice.Viewport.Bounds;
-            
-            int height = (int)window.Height / 32;
-            int width = (int)window.Width / 32;
-            
-            Vector2 newScreenPos = new Vector2((width / 2) * 32, (height / 2) * 32);
-            
-            int xDiff = (int)newScreenPos.X - (int)Game1.player.startScreenPosition.X;
-            int yDiff = ((int)newScreenPos.Y - (int)Game1.player.startScreenPosition.Y);
+        public static Location getCoordinates(Vector2 position) {
+            double x = (double)(position.X - SideCraft.player.ScreenPosition.X) / 32 + SideCraft.player.coordinates.getX();
+            double y = (((position.Y - SideCraft.player.ScreenPosition.Y) / 32) * -1) + SideCraft.player.coordinates.getY();
 
-            return new Vector2(oldPosition.X + xDiff, oldPosition.Y + yDiff);
+            return new Location(x,y);
         }
-
-        public static Rectangle getUpdatedRectangle(Rectangle oldPosition) {
-            Rectangle window = Game1.graphics.GraphicsDevice.Viewport.Bounds;
-            
-            int width = (int)window.Width / 32;
-            int height = (int)window.Height / 32;
-            
-            Vector2 newScreenPos = new Vector2((width / 2) * 32, (height/2) * 32);
-            
-            int xDiff = (int)newScreenPos.X - (int)Game1.player.startScreenPosition.X;
-            int yDiff = (int)newScreenPos.Y - (int)Game1.player.startScreenPosition.Y * -1;
-
-            return new Rectangle(oldPosition.X + xDiff, oldPosition.Y + yDiff, oldPosition.Width, oldPosition.Height);
-        }
-
     }
 }

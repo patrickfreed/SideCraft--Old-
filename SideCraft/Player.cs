@@ -6,19 +6,15 @@ using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
 using Microsoft.Xna.Framework;
 using SideCraft;
-using SideCraft.Terrain.MaterialData;
 using SideCraft.UI;
-using SideCraft.Inventory;
-using SideCraft.Material;
+using SideCraft.inventory;
+using SideCraft.material;
 
 namespace SideCraft {
     public class Player {
-        public Vector2 MapPosition;
-        public Vector2 startMapPosition;
-        public Vector2 ScreenPosition;
-        public Vector2 startScreenPosition;
+
+        public Rectangle ScreenPosition;
         private Vector2 speed;
-        public Rectangle recPos;
 
         private Toolbar toolbar;
         private PlayerInventory inventory;
@@ -28,41 +24,57 @@ namespace SideCraft {
         private static Int64 milliseconds = 0;
         private float interval = 250f;
 
+        private Vector2 DIRECTION;
+
         private double originalY;
 
         private MovementState moveState;
    
-        const double JUMP_HEIGHT = 1.3;
+        const double JUMP_HEIGHT = 1.0;
+        const int LEFT = -1, UP = 1, RIGHT = 1, DOWN = -1, MOVEMENT_SPEED = 300, STABLE = 0;
 
-        private static MouseState oldState;
+        float startX, startY, currentX, currentY, oldX, oldY;
 
-        public World world;
+        private static MouseState oldMouseState, mouseState;
+        private static KeyboardState oldKbState, kbState;
 
-        public Coordinates coordinates = new Coordinates(0, 0);
+        public String world;
+
+        public Location coordinates;
 
         enum MovementState {
-            Walking,
-            Jumping,
-            Falling
+            WALKING,
+            JUMPING,
+            FALLING
         }
 
         enum actionState {
-            Idle,
-            Breaking
+            IDLE,
+            BREAKING
         }
 
         public Player() {
-            startMapPosition = new Vector2(388, 224);
-            ScreenPosition = new Vector2(384, 192);
-            startScreenPosition = ScreenPosition;
-            recPos = new Rectangle((int)startMapPosition.X, (int)startMapPosition.Y, 32, 64);
+           
+            ScreenPosition = new Rectangle(388, 224, 30, 32);
+            
+            startX = 388f;
+            startY = 224f;
+            currentX = startX;
+            currentY = startY;
 
-            oldState = Mouse.GetState();
+            DIRECTION = new Vector2(RIGHT, UP);
+            coordinates = new Location(0, 0, "world");
+
+            oldMouseState = Mouse.GetState();
+            mouseState = oldMouseState;
+
+            kbState = Keyboard.GetState();
+            oldKbState = Keyboard.GetState();
             
             toolbar = new Toolbar();
             inventory = new PlayerInventory();
             
-            moveState = MovementState.Walking;
+            moveState = MovementState.WALKING;
         }
 
         public void LoadContent(Texture2D t) {
@@ -70,23 +82,34 @@ namespace SideCraft {
         }
 
         public void Update(GameTime gameTime) {
+            updateStates();
+            
             updateMovement(gameTime);
+           // updateCollision();
             updateInteraction(gameTime);
             updateToolbar();
         }
 
+        private void updateStates() {
+            oldMouseState = mouseState;
+            mouseState = Mouse.GetState();
+            
+            oldKbState = kbState;
+            kbState = Keyboard.GetState();
+        }
+
         private void updateToolbar() {
-            if (Mouse.GetState().ScrollWheelValue > oldState.ScrollWheelValue) {
-                getToolbar().setCurrentIndex(getToolbar().getCurrentIndex() + 1);
+            if (mouseState.ScrollWheelValue > oldMouseState.ScrollWheelValue || (!oldKbState.IsKeyDown(Keys.B) && kbState.IsKeyDown(Keys.B))) {
+                getToolbar().setCurrentIndex(1);
+            }
+            else if (mouseState.ScrollWheelValue < oldMouseState.ScrollWheelValue) {
+                getToolbar().setCurrentIndex(-1);
             }
         }
 
         private void updateInteraction(GameTime gameTime) {
-            Util util = new Util();
-            KeyboardState kbState = Keyboard.GetState();
-
             if (Mouse.GetState().LeftButton == ButtonState.Pressed) {
-                Coordinates mouseCoords = util.getCoordinates(new Vector2(Mouse.GetState().X, Mouse.GetState().Y));
+                Location mouseCoords = Util.getCoordinates(new Vector2(Mouse.GetState().X, Mouse.GetState().Y));
 
                 milliseconds += (long)gameTime.ElapsedGameTime.TotalMilliseconds;
 
@@ -94,69 +117,85 @@ namespace SideCraft {
                     milliseconds = 0;
 
                     if (Math.Abs(mouseCoords.getX() - coordinates.getX()) <= 4 && Math.Abs(mouseCoords.getY() - coordinates.getY()) <= 4) {
-                        Block block = world.getBlockAt(mouseCoords);
+                        Block block = getWorld().getBlockAt(mouseCoords);
 
                         if (block.getType() is Air) return;
 
-                        world.getBlockAt(mouseCoords).getType().damage(5);
-
-                        if (block.getType().getCurrentDurability() <= 0) {
-                            block.setType(new Air());
-                        }
+                        getWorld().getBlockAt(mouseCoords).damage(5);
                     }
                 }
             }
             else if (Mouse.GetState().RightButton == ButtonState.Pressed) {
-                Coordinates mouseCoords = util.getCoordinates(new Vector2(Mouse.GetState().X, Mouse.GetState().Y));
-                Block block = world.getBlockAt(mouseCoords);
+                Location mouseCoords = Util.getCoordinates(new Vector2(Mouse.GetState().X, Mouse.GetState().Y));
+                Block block = getWorld().getBlockAt(mouseCoords);
 
-                if (block.getType() is Air && block != world.getBlockAt(this.coordinates) && block != world.getBlockAt(new Coordinates(coordinates.getX(), coordinates.getY() + 1))) {
-                    block.setType(new Stone());
+                if (canPlaceBlock(block)) {
+                    block.setType(getToolbar().getSelectedObj().getType());
+                    getToolbar().getSelectedObj().modifyAmount(-1);
+
+                    if (getToolbar().getSelectedObj().getAmount() <= 0) {
+                        getInventory().setAt(getToolbar().getCurrentIndex(), 0, new MaterialStack(Material.AIR, 0));
+                    }
                 }
             }
         }
+
+        /*
+         * To do: Clean up all of this to match new use of rectangles
+         */
 
         private void updateMovement(GameTime gameTime) {
             Util util = new Util();
             KeyboardState kbState = Keyboard.GetState();
 
             if (kbState.IsKeyDown(Keys.A) || kbState.IsKeyDown(Keys.S)) {
-                speed.X = -300 * (float)gameTime.ElapsedGameTime.TotalSeconds;
+                
+                //Block b = getWorld().getBlockAt(util.getCoordinates(new Vector2(this.ScreenPosition.Left, this.ScreenPosition.Bottom)));
+                Block t = getWorld().getBlockAt(Util.getCoordinates(new Vector2(this.ScreenPosition.Left, this.ScreenPosition.Center.Y)));
 
-                Block feet = world.getBlockAt(new Coordinates(Math.Ceiling(coordinates.getX() - 1.15), coordinates.getY()));
-                Block head = world.getBlockAt(new Coordinates(Math.Ceiling(coordinates.getX() - 1.15), coordinates.getY() + 1));
-
-                if (feet.getTypeId() != Game1.AIR || head.getTypeId() != Game1.AIR) {
+                if (!t.getType().isSolid()) {
+                    speed.X = MOVEMENT_SPEED * (float)gameTime.ElapsedGameTime.TotalSeconds;
+                    DIRECTION.X = LEFT;
+                }
+                else {
                     speed.X = 0;
                 }
             }
             else if (kbState.IsKeyDown(Keys.W) || kbState.IsKeyDown(Keys.D)) {
-                speed.X = 300 * (float)gameTime.ElapsedGameTime.TotalSeconds;
 
-                Block feet = world.getBlockAt(new Coordinates(Math.Floor(coordinates.getX() + 0.7), coordinates.getY()));
-                Block head = world.getBlockAt(new Coordinates(Math.Floor(coordinates.getX() + 0.7), Math.Floor(coordinates.getY() + 1)));
-       
-                if (feet.getTypeId() != Game1.AIR || head.getTypeId() != Game1.AIR) {
+                //Block b = getWorld().getBlockAt(Util.getCoordinates(new Vector2(this.ScreenPosition.Right, this.ScreenPosition.Bottom)));
+                //Block t = getWorld().getBlockAt(Util.getCoordinates(new Vector2(this.ScreenPosition.Right, this.ScreenPosition.Center.Y)));
+
+                Block nextBlock = getWorld().getBlockAt(Util.getCoordinates(new Vector2(this.ScreenPosition.Right, this.ScreenPosition.Center.Y)));
+
+                if (!nextBlock.getType().isSolid()) {
+                    speed.X = 300 * (float)gameTime.ElapsedGameTime.TotalSeconds;
+                    DIRECTION.X = RIGHT;
+                }
+                else {
                     speed.X = 0;
+                    DIRECTION.X = STABLE;
                 }
             }
-            else
+            else {
+                DIRECTION.X = STABLE;
                 speed.X = 0;
+            }
 
-            Coordinates leftFoot = new Coordinates(coordinates.getX(), Math.Ceiling(coordinates.getY() - 1));
-            Coordinates rightFoot = new Coordinates(coordinates.getX() + 0.5, Math.Ceiling(coordinates.getY() - 1));
-            Coordinates rightEar = new Coordinates(coordinates.getX() + 0.5, Math.Floor(coordinates.getY() + 2));
-            Coordinates leftEar = new Coordinates(coordinates.getX(), Math.Floor(coordinates.getY() + 2));
+            Location leftFoot = Util.getCoordinates(new Vector2(ScreenPosition.Left, ScreenPosition.Bottom));
+            Location rightFoot = Util.getCoordinates(new Vector2(ScreenPosition.Right, ScreenPosition.Bottom));
+            Location rightEar = Util.getCoordinates(new Vector2(ScreenPosition.Right, ScreenPosition.Top));
+            Location leftEar = Util.getCoordinates(new Vector2(ScreenPosition.Left, ScreenPosition.Top));
+            Location above = Util.getCoordinates(new Vector2(ScreenPosition.Center.X, ScreenPosition.Top));
 
-            if (moveState != MovementState.Jumping) {
-
-                //if (world.getBlockAt(new Coordinates(coordinates.getX(), Math.Ceiling(coordinates.getY()) - 1)).getType() is Air) {
-                if((world.getBlockAt(leftFoot).getType() is Air && world.getBlockAt(rightFoot).getType() is Air) || coordinates.getY() % 1 != 0){ 
+            if (moveState != MovementState.JUMPING) {
+                if((getWorld().getBlockAt(leftFoot).getType() is Air && getWorld().getBlockAt(rightFoot).getType() is Air) /*|| coordinates.getY() % 1 != 0*/){ 
                     speed.Y = -4;
                 }
-                else if (moveState == MovementState.Walking && Keyboard.GetState().IsKeyDown(Keys.Space) && !(world.getBlockAt(leftFoot).getType() is Air) && !(world.getBlockAt(rightFoot).getType() is Air)) {
+                else if (moveState == MovementState.WALKING && Keyboard.GetState().IsKeyDown(Keys.Space) && !(getWorld().getBlockAt(leftFoot).getType() is Air) && !(getWorld().getBlockAt(rightFoot).getType() is Air) && !getWorld().getBlockAt(above).getType().isSolid()) {
                     speed.Y = 4;
-                    moveState = MovementState.Jumping;
+                    DIRECTION.Y = UP;
+                    moveState = MovementState.JUMPING;
                     originalY = coordinates.getY();
                 }
                 else {
@@ -165,24 +204,58 @@ namespace SideCraft {
 
             }
 
-            if (moveState == MovementState.Jumping && ((coordinates.getY() - this.originalY >= JUMP_HEIGHT) || !(world.getBlockAt(rightEar).getType() is Air) || !(world.getBlockAt(leftEar).getType() is Air))) {
-                moveState = MovementState.Walking;
+            if (moveState == MovementState.JUMPING && ((coordinates.getY() - this.originalY >= JUMP_HEIGHT) || !(getWorld().getBlockAt(above).getType() is Air))) {
+                moveState = MovementState.WALKING;
                 originalY = 0;
             }
 
-               // MapPosition += speed;
-            recPos.X += (int)speed.X;
-            recPos.Y += (int)speed.Y;
+            oldX = currentX;
+            oldY = currentY;
 
-            //coordinates.setX((MapPosition.X - startMapPosition.X) / 32);
-            //coordinates.setY((MapPosition.Y - startMapPosition.Y) / 32);
-            coordinates.setX((recPos.X - startMapPosition.X) / 32);
-            coordinates.setY((recPos.Y - startMapPosition.Y) / 32);
+            currentX += speed.X * DIRECTION.X;
+            currentY += speed.Y * DIRECTION.Y;
+
+            coordinates.modifyX((currentX - oldX) / 32);
+            coordinates.modifyY((currentY - oldY) / 32);
+        }
+
+        private void updateCollision() {
+            if (DIRECTION.X == RIGHT) {
+                if (speed.Y > 0) {
+                    if (DIRECTION.Y == UP) {
+                        Block above = getWorld().getBlockAt(new Location(coordinates.getX(), coordinates.getY() + 1));
+                        Block front = getWorld().getBlockAt(Util.getCoordinates(new Vector2(this.ScreenPosition.Right, this.ScreenPosition.Center.Y)));
+                        Block topright = getWorld().getBlockAt(new Location(coordinates.getX() + 1, coordinates.getY() + 1));
+
+                        if((getBounds().Intersects(above.getBounds()) && above.getType().isSolid()) || (getBounds().Intersects(front.getBounds()) && front.getType().isSolid()) || (topright.getBounds().Intersects(getBounds()) && topright.getType().isSolid())){ 
+                            moveState = MovementState.WALKING;
+                            speed.X = 0;
+                            coordinates.modifyX(-0.5);
+                        }
+                    }
+                    else if(DIRECTION.Y == DOWN){
+                        Block below = getWorld().getBlockAt(new Location(coordinates.getX(), coordinates.getY() - 1));
+                        Block front = getWorld().getBlockAt(Util.getCoordinates(new Vector2(this.ScreenPosition.Right, this.ScreenPosition.Center.Y)));
+                        Block bottomright = getWorld().getBlockAt(new Location(coordinates.getX() + 1, coordinates.getY() - 1));
+
+                        if(getBounds().Intersects(below.getBounds()) || getBounds().Intersects(front.getBounds()) || bottomright.getBounds().Intersects(getBounds())){ 
+                            speed = Vector2.Zero;
+                        }
+                    }
+                }else{
+                    Block front = getWorld().getBlockAt(new Location(coordinates.getX() + 1, coordinates.getY()));
+
+                    if(getBounds().Intersects(front.getBounds())){
+                        speed.X = 0;
+                    }
+                }
+            }
         }
 
         public void Draw(SpriteBatch spriteBatch) {
-            spriteBatch.Draw(texture, ScreenPosition, Color.White);
-            spriteBatch.Draw(getInventory().getAt(0, getToolbar().getCurrentIndex()).getType().getTexture(), new Vector2(ScreenPosition.X + 20, ScreenPosition.Y + 10), Color.White);
+            //spriteBatch.Draw(texture, ScreenPosition, Color.White);
+            Screen.render(coordinates, texture, 32, 32, false);
+            spriteBatch.Draw(getInventory().getAt(getToolbar().getCurrentIndex(), 0).getType().getTexture(), new Vector2(ScreenPosition.X + 20, ScreenPosition.Y + 10), Color.White);
             toolbar.Draw(spriteBatch);
         }
 
@@ -192,6 +265,18 @@ namespace SideCraft {
 
         public Toolbar getToolbar() {
             return this.toolbar;
+        }
+
+        public World getWorld() {
+            return SideCraft.worlds[world];
+        }
+
+        private bool canPlaceBlock(Block block) {
+            return !(getToolbar().getSelectedObj().getType() is Air) && block.getType() is Air;
+        }
+
+        private Rectangle getBounds() {
+            return ScreenPosition;
         }
     }
 }

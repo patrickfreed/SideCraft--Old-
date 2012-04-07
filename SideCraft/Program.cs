@@ -13,7 +13,7 @@ namespace SideCraft {
         {
             SideCraftMainMenu menu = new SideCraftMainMenu();
             if (menu.ShowDialog() == DialogResult.OK) {
-                using (Game1 game = new Game1()) {
+                using (SideCraft game = new SideCraft()) {
                     game.Run();
                 }
             }

@@ -2,23 +2,22 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using SideCraft.Terrain.MaterialData;
 
-namespace SideCraft.Material {
+namespace SideCraft.material {
     public class MaterialStack {
 
         public const int DEFAULT_STACK_SIZE = 64;
 
-        private MaterialData type;
+        private Material type;
 
         private int amount;
 
-        public MaterialStack(MaterialData t, int am) {
+        public MaterialStack(Material t, int am) {
             this.type = t;
             this.amount = am;
         }
 
-        public MaterialData getType() {
+        public Material getType() {
             return this.type;
         }
 
@@ -26,8 +25,8 @@ namespace SideCraft.Material {
             return this.amount;
         }
 
-        public void setAmount(int newAmount) {
-            this.amount = newAmount;
+        public void modifyAmount(int newAmount) {
+            this.amount += newAmount;
         }
     }
 }

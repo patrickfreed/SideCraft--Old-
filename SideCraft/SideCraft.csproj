@@ -110,28 +110,31 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Coordinates.cs" />
-    <Compile Include="Inventory\Inventory.cs" />
-    <Compile Include="Material\Block.cs" />
-    <Compile Include="Material\MaterialData\Air.cs" />
-    <Compile Include="Material\MaterialData\MaterialData.cs" />
-    <Compile Include="Material\MaterialData\Dirt.cs" />
-    <Compile Include="Material\MaterialData\Grass.cs" />
-    <Compile Include="Material\MaterialData\IronOre.cs" />
-    <Compile Include="Material\MaterialData\Stone.cs" />
-    <Compile Include="Material\MaterialStack.cs" />
-    <Compile Include="Material\World.cs" />
+    <Compile Include="entity\DropEntity.cs" />
+    <Compile Include="entity\Entity.cs" />
+    <Compile Include="Screen.cs" />
+    <Compile Include="world\Location.cs" />
+    <Compile Include="inventory\PlayerInventory.cs" />
+    <Compile Include="world\Block.cs" />
+    <Compile Include="material\Material.cs" />
+    <Compile Include="material\Air.cs" />
+    <Compile Include="material\Dirt.cs" />
+    <Compile Include="material\Grass.cs" />
+    <Compile Include="material\IronOre.cs" />
+    <Compile Include="material\Stone.cs" />
+    <Compile Include="material\MaterialStack.cs" />
+    <Compile Include="world\World.cs" />
     <Compile Include="Player.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Program.cs" />
-    <Compile Include="Game1.cs" />
+    <Compile Include="SideCraft.cs" />
     <Compile Include="UI\SideCraftMainMenu.cs">
       <SubType>Form</SubType>
     </Compile>
     <Compile Include="UI\SideCraftMainMenu.Designer.cs">
       <DependentUpon>SideCraftMainMenu.cs</DependentUpon>
     </Compile>
-    <Compile Include="UI\Toolbar.cs" />
+    <Compile Include="inventory\Toolbar.cs" />
     <Compile Include="util\Event.cs" />
     <Compile Include="util\Util.cs" />
   </ItemGroup>

@@ -1,0 +1,163 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<XnaContent xmlns:Pipeline="Microsoft.Xna.Framework.Content.Pipeline">
+  <Asset Type="Pipeline:BuildItemCollection">
+    <Item>
+      <Source>air.png</Source>
+      <Name>air</Name>
+      <Importer>TextureImporter</Importer>
+      <Processor>TextureProcessor</Processor>
+      <Options>None</Options>
+      <Output>C:\Users\Patrick\Documents\Visual Studio 2010\Projects\SideCraft\SideCraft\SideCraft\bin\x86\Debug\Content\air.xnb</Output>
+      <Time>2012-01-14T19:52:10-05:00</Time>
+    </Item>
+    <Item>
+      <Source>dirt.png</Source>
+      <Name>dirt</Name>
+      <Importer>TextureImporter</Importer>
+      <Processor>TextureProcessor</Processor>
+      <Options>None</Options>
+      <Output>C:\Users\Patrick\Documents\Visual Studio 2010\Projects\SideCraft\SideCraft\SideCraft\bin\x86\Debug\Content\dirt.xnb</Output>
+      <Time>2011-12-21T00:08:36-05:00</Time>
+    </Item>
+    <Item>
+      <Source>grass.png</Source>
+      <Name>grass</Name>
+      <Importer>TextureImporter</Importer>
+      <Processor>TextureProcessor</Processor>
+      <Options>None</Options>
+      <Output>C:\Users\Patrick\Documents\Visual Studio 2010\Projects\SideCraft\SideCraft\SideCraft\bin\x86\Debug\Content\grass.xnb</Output>
+      <Time>2011-12-21T00:08:36-05:00</Time>
+    </Item>
+    <Item>
+      <Source>iron_ore.png</Source>
+      <Name>iron_ore</Name>
+      <Importer>TextureImporter</Importer>
+      <Processor>TextureProcessor</Processor>
+      <Options>None</Options>
+      <Output>C:\Users\Patrick\Documents\Visual Studio 2010\Projects\SideCraft\SideCraft\SideCraft\bin\x86\Debug\Content\iron_ore.xnb</Output>
+      <Time>2011-12-21T00:08:36-05:00</Time>
+    </Item>
+    <Item>
+      <Source>stone.png</Source>
+      <Name>stone</Name>
+      <Importer>TextureImporter</Importer>
+      <Processor>TextureProcessor</Processor>
+      <Options>None</Options>
+      <Output>C:\Users\Patrick\Documents\Visual Studio 2010\Projects\SideCraft\SideCraft\SideCraft\bin\x86\Debug\Content\stone.xnb</Output>
+      <Time>2011-12-21T00:08:36-05:00</Time>
+    </Item>
+    <Item>
+      <Source>goodguy_right.png</Source>
+      <Name>goodguy_right</Name>
+      <Importer>TextureImporter</Importer>
+      <Processor>TextureProcessor</Processor>
+      <Options>None</Options>
+      <Output>C:\Users\Patrick\Documents\Visual Studio 2010\Projects\SideCraft\SideCraft\SideCraft\bin\x86\Debug\Content\goodguy_right.xnb</Output>
+      <Time>2011-12-21T00:12:08-05:00</Time>
+    </Item>
+    <Item>
+      <Source>steve.png</Source>
+      <Name>steve</Name>
+      <Importer>TextureImporter</Importer>
+      <Processor>TextureProcessor</Processor>
+      <Options>None</Options>
+      <Output>C:\Users\Patrick\Documents\Visual Studio 2010\Projects\SideCraft\SideCraft\SideCraft\bin\x86\Debug\Content\steve.xnb</Output>
+      <Time>2012-01-15T14:19:02-05:00</Time>
+    </Item>
+    <Item>
+      <Source>stick.png</Source>
+      <Name>stick</Name>
+      <Importer>TextureImporter</Importer>
+      <Processor>TextureProcessor</Processor>
+      <Options>None</Options>
+      <Output>C:\Users\Patrick\Documents\Visual Studio 2010\Projects\SideCraft\SideCraft\SideCraft\bin\x86\Debug\Content\stick.xnb</Output>
+      <Time>2012-01-13T14:57:00-05:00</Time>
+    </Item>
+    <Item>
+      <Source>Mouse\selection.png</Source>
+      <Name>Mouse\selection</Name>
+      <Importer>TextureImporter</Importer>
+      <Processor>TextureProcessor</Processor>
+      <Options>None</Options>
+      <Output>C:\Users\Patrick\Documents\Visual Studio 2010\Projects\SideCraft\SideCraft\SideCraft\bin\x86\Debug\Content\Mouse\selection.xnb</Output>
+      <Time>2012-01-13T15:23:28-05:00</Time>
+    </Item>
+    <Item>
+      <Source>background.png</Source>
+      <Name>background</Name>
+      <Importer>TextureImporter</Importer>
+      <Processor>TextureProcessor</Processor>
+      <Options>None</Options>
+      <Output>C:\Users\Patrick\Documents\Visual Studio 2010\Projects\SideCraft\SideCraft\SideCraft\bin\x86\Debug\Content\background.xnb</Output>
+      <Time>2012-01-13T19:58:46-05:00</Time>
+    </Item>
+    <Item>
+      <Source>UIContent\Toolbar.png</Source>
+      <Name>UIContent\Toolbar</Name>
+      <Importer>TextureImporter</Importer>
+      <Processor>TextureProcessor</Processor>
+      <Options>None</Options>
+      <Output>C:\Users\Patrick\Documents\Visual Studio 2010\Projects\SideCraft\SideCraft\SideCraft\bin\x86\Debug\Content\UIContent\Toolbar.xnb</Output>
+      <Time>2012-03-31T03:46:56-04:00</Time>
+    </Item>
+    <Item>
+      <Source>CourierNew.spritefont</Source>
+      <Name>CourierNew</Name>
+      <Importer>FontDescriptionImporter</Importer>
+      <Processor>FontDescriptionProcessor</Processor>
+      <Options>None</Options>
+      <Output>C:\Users\Patrick\Documents\Visual Studio 2010\Projects\SideCraft\SideCraft\SideCraft\bin\x86\Debug\Content\CourierNew.xnb</Output>
+      <Time>2012-04-05T18:32:51.4273083-04:00</Time>
+    </Item>
+    <Item>
+      <Source>UIContent\toolbar_selection.png</Source>
+      <Name>UIContent\toolbar_selection</Name>
+      <Importer>TextureImporter</Importer>
+      <Processor>TextureProcessor</Processor>
+      <Options>None</Options>
+      <Output>C:\Users\Patrick\Documents\Visual Studio 2010\Projects\SideCraft\SideCraft\SideCraft\bin\x86\Debug\Content\UIContent\toolbar_selection.xnb</Output>
+      <Time>2012-04-05T17:29:04.0494265-04:00</Time>
+    </Item>
+    <BuildSuccessful>true</BuildSuccessful>
+    <Settings>
+      <TargetPlatform>Windows</TargetPlatform>
+      <TargetProfile>HiDef</TargetProfile>
+      <BuildConfiguration>Debug</BuildConfiguration>
+      <CompressContent>false</CompressContent>
+      <RootDirectory>C:\Users\Patrick\Documents\Visual Studio 2010\Projects\SideCraft\SideCraft\SideCraftContent\</RootDirectory>
+      <LoggerRootDirectory>C:\Users\Patrick\Documents\Visual Studio 2010\Projects\SideCraft\SideCraft\SideCraft\</LoggerRootDirectory>
+      <IntermediateDirectory>C:\Users\Patrick\Documents\Visual Studio 2010\Projects\SideCraft\SideCraft\SideCraftContent\obj\x86\Debug\</IntermediateDirectory>
+      <OutputDirectory>C:\Users\Patrick\Documents\Visual Studio 2010\Projects\SideCraft\SideCraft\SideCraft\bin\x86\Debug\Content\</OutputDirectory>
+    </Settings>
+    <Assemblies>
+      <Assembly>
+        <Key>C:\Program Files (x86)\Microsoft XNA\XNA Game Studio\v4.0\References\Windows\x86\Microsoft.Xna.Framework.Content.Pipeline.XImporter.dll</Key>
+        <Value>2010-08-23T13:41:18-04:00</Value>
+      </Assembly>
+      <Assembly>
+        <Key>C:\Program Files (x86)\Microsoft XNA\XNA Game Studio\v4.0\References\Windows\x86\Microsoft.Xna.Framework.Content.Pipeline.VideoImporters.dll</Key>
+        <Value>2010-08-23T13:41:18-04:00</Value>
+      </Assembly>
+      <Assembly>
+        <Key>C:\Program Files (x86)\Microsoft XNA\XNA Game Studio\v4.0\References\Windows\x86\Microsoft.Xna.Framework.Content.Pipeline.TextureImporter.dll</Key>
+        <Value>2010-08-23T13:41:18-04:00</Value>
+      </Assembly>
+      <Assembly>
+        <Key>C:\Program Files (x86)\Microsoft XNA\XNA Game Studio\v4.0\References\Windows\x86\Microsoft.Xna.Framework.Content.Pipeline.FBXImporter.dll</Key>
+        <Value>2010-08-23T13:41:18-04:00</Value>
+      </Assembly>
+      <Assembly>
+        <Key>C:\Program Files (x86)\Microsoft XNA\XNA Game Studio\v4.0\References\Windows\x86\Microsoft.Xna.Framework.Content.Pipeline.EffectImporter.dll</Key>
+        <Value>2010-08-23T13:41:18-04:00</Value>
+      </Assembly>
+      <Assembly>
+        <Key>C:\Program Files (x86)\Microsoft XNA\XNA Game Studio\v4.0\References\Windows\x86\Microsoft.Xna.Framework.Content.Pipeline.AudioImporters.dll</Key>
+        <Value>2010-08-23T13:41:18-04:00</Value>
+      </Assembly>
+      <Assembly>
+        <Key>C:\Windows\Microsoft.Net\assembly\GAC_32\Microsoft.Xna.Framework.Content.Pipeline\v4.0_4.0.0.0__842cf8be1de50553\Microsoft.Xna.Framework.Content.Pipeline.dll</Key>
+        <Value>2012-01-11T23:04:31.1814155-05:00</Value>
+      </Assembly>
+    </Assemblies>
+  </Asset>
+</XnaContent>
