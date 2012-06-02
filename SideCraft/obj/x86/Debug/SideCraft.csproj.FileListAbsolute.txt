@@ -20,3 +20,4 @@ C:\Users\Patrick\Documents\Visual Studio 2010\Projects\SideCraft\SideCraft\SideC
 C:\Users\Patrick\Documents\Visual Studio 2010\Projects\SideCraft\SideCraft\SideCraft\obj\x86\Debug\SideCraft.UI.SideCraftMainMenu.resources
 C:\Users\Patrick\Documents\Visual Studio 2010\Projects\SideCraft\SideCraft\SideCraft\bin\x86\Debug\Content\UIContent\Toolbar.xnb
 C:\Users\Patrick\Documents\Visual Studio 2010\Projects\SideCraft\SideCraft\SideCraft\bin\x86\Debug\Content\UIContent\toolbar_selection.xnb
+C:\Users\Patrick\Documents\Visual Studio 2010\Projects\SideCraft\SideCraft\SideCraft\bin\x86\Debug\Content\obsidian.xnb

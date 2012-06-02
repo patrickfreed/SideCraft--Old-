@@ -15,7 +15,45 @@ namespace SideCraft.inventory {
 
         public PlayerInventory() {
             contents = new MaterialStack[COLUMNS, ROWS];
-            contents[4, 0] = new MaterialStack(Material.GRASS, 5);
+            contents[0, 0] = new MaterialStack(Material.STONE, 5);
+        }
+
+        public void add(MaterialStack stack) {
+            for(int x = 0; x < contents.GetLength(0); x++){
+                for (int y = 0; y < contents.GetLength(1); y++) {
+                    if (contents[x, y] != null) {
+                        if (contents[x, y].getType() == stack.getType()) {
+                            if (contents[x, y].getAmount() < contents[x, y].getType().getMaxStackSize()) {
+                                int amount = contents[x, y].getType().getMaxStackSize() - contents[x, y].getAmount();
+
+                                if (amount > stack.getAmount()) {
+                                    contents[x, y].modifyAmount(stack.getAmount());
+                                    stack.modifyAmount(-1 * stack.getAmount());
+                                }
+                                else {
+                                    contents[x, y].modifyAmount(amount);
+                                    stack.modifyAmount(-1 * amount);
+                                }
+
+                                if (stack.getAmount() == 0) {
+                                    return;
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+
+            if (stack.getAmount() > 0) {
+                for (int y = 0; y < contents.GetLength(0); y++) {
+                    for (int x = 0; x < contents.GetLength(1); x++) {
+                        if (contents[x, y]  == null) {
+                            setAt(x, y, stack);
+                            return;
+                        }
+                    }
+                }
+            }
         }
 
         public MaterialStack getAt(int column, int row) {    
@@ -46,8 +84,10 @@ namespace SideCraft.inventory {
         public int[] getIndex(MaterialStack stack) {
             for(int x = 0; x < contents.GetLength(0); x++){
                 for (int y = 0; y < contents.GetLength(1); y++) {
-                    if(contents[x,y].getType().getId() == stack.getType().getId()){
-                        return new int[] {x,y};
+                    if (contents[x, y] != null) {
+                        if (contents[x, y].getType().getId() == stack.getType().getId()) {
+                            return new int[] { x, y };
+                        }
                     }
                 }
             }

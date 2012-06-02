@@ -11,3 +11,4 @@ Content\background.xnb
 Content\UIContent\Toolbar.xnb
 Content\CourierNew.xnb
 Content\UIContent\toolbar_selection.xnb
+Content\obsidian.xnb

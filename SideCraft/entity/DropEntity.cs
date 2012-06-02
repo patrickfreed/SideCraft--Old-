@@ -14,30 +14,39 @@ namespace SideCraft.entity {
         const int WIDTH = 15, HEIGHT = 15;
 
         public DropEntity(Material t, Location loc) {
-            location = loc;
+            spawn(loc);
             type = t;
-            loc.getWorld().registerEntity(this);
         }
 
         public DropEntity(Material t, double x, double y, World world) {
             location = new Location(x, y, world.getName());
             type = t;
-            location.getWorld().registerEntity(this);
+            spawn(location);
         }
 
         public DropEntity(Material t, double x, double y) {
             type = t;
-            location = new Location(x, y);
-            location.getWorld().registerEntity(this);
+            Location location = new Location(x, y);
+
+            spawn(location);
+        }
+
+        public void spawn(Location loc) {
+            while (loc.getWorld().getBlockAt(loc).getType().isSolid()) {
+                loc.modifyY(1);
+            }
+
+            this.location = loc;
+            loc.getWorld().registerEntity(this);
         }
 
         public void update() {
             
             Block thisBlock = this.getLocation().getWorld().getBlockAt(this.getLocation());
-            if (thisBlock.getType() is Air) {
+            if (!thisBlock.getType().isSolid()) {
                 Block nextBlock = this.getLocation().getWorld().getBlockAt(new Location(location.getX(), location.getY() - 1));
 
-                if (!(nextBlock.getType() is Air)) {
+                if (nextBlock.getType().isSolid()) {
                     if(!nextBlock.getBounds().Intersects(getBounds())){
                         location.setY(location.getY() - 0.2);
                     }
@@ -45,7 +54,26 @@ namespace SideCraft.entity {
                     location.setY(location.getY() - 0.2);
                 }
             }
+
+            if (Math.Abs(SideCraft.player.coordinates.getX() - getLocation().getX()) <= 1.5 && Math.Abs(SideCraft.player.coordinates.getY() - getLocation().getY()) <= 1.5) {
+                if (SideCraft.player.coordinates.getX() > getLocation().getX()) {
+                    location.modifyX(0.2);
+                }
+                else {
+                    location.modifyX(-0.2);
+                }
+            }
+
             draw();
+
+            if(getBounds().Intersects(SideCraft.player.getBounds())){
+                destroy();
+            }
+        }
+
+        public void destroy() {
+            SideCraft.player.getInventory().add(new MaterialStack(this.type, 1));
+            getLocation().getWorld().unregisterEntity(this);
         }
 
         public void draw() {

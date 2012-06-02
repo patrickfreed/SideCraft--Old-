@@ -29,14 +29,16 @@ namespace SideCraft {
         private double originalY;
 
         private MovementState moveState;
-   
-        const double JUMP_HEIGHT = 1.0;
-        const int LEFT = -1, UP = 1, RIGHT = 1, DOWN = -1, MOVEMENT_SPEED = 300, STABLE = 0;
+
+        const double JUMP_HEIGHT = 1.3;
+        const int LEFT = -1, UP = 1, RIGHT = 1, DOWN = -1, MOVEMENT_SPEED = 300, STABLE = 0, ARM_LENGTH = 4;
 
         float startX, startY, currentX, currentY, oldX, oldY;
 
         private static MouseState oldMouseState, mouseState;
         private static KeyboardState oldKbState, kbState;
+
+        Location top, side, bottom;
 
         public String world;
 
@@ -54,9 +56,9 @@ namespace SideCraft {
         }
 
         public Player() {
-           
+
             ScreenPosition = new Rectangle(388, 224, 30, 32);
-            
+
             startX = 388f;
             startY = 224f;
             currentX = startX;
@@ -70,10 +72,10 @@ namespace SideCraft {
 
             kbState = Keyboard.GetState();
             oldKbState = Keyboard.GetState();
-            
+
             toolbar = new Toolbar();
             inventory = new PlayerInventory();
-            
+
             moveState = MovementState.WALKING;
         }
 
@@ -83,17 +85,17 @@ namespace SideCraft {
 
         public void Update(GameTime gameTime) {
             updateStates();
-            
             updateMovement(gameTime);
-           // updateCollision();
+            updateCollision();
             updateInteraction(gameTime);
             updateToolbar();
+            updatePosition();
         }
 
         private void updateStates() {
             oldMouseState = mouseState;
             mouseState = Mouse.GetState();
-            
+
             oldKbState = kbState;
             kbState = Keyboard.GetState();
         }
@@ -134,7 +136,7 @@ namespace SideCraft {
                     getToolbar().getSelectedObj().modifyAmount(-1);
 
                     if (getToolbar().getSelectedObj().getAmount() <= 0) {
-                        getInventory().setAt(getToolbar().getCurrentIndex(), 0, new MaterialStack(Material.AIR, 0));
+                        getInventory().setAt(getToolbar().getCurrentIndex(), 0, null);
                     }
                 }
             }
@@ -149,50 +151,29 @@ namespace SideCraft {
             KeyboardState kbState = Keyboard.GetState();
 
             if (kbState.IsKeyDown(Keys.A) || kbState.IsKeyDown(Keys.S)) {
-                
-                //Block b = getWorld().getBlockAt(util.getCoordinates(new Vector2(this.ScreenPosition.Left, this.ScreenPosition.Bottom)));
-                Block t = getWorld().getBlockAt(Util.getCoordinates(new Vector2(this.ScreenPosition.Left, this.ScreenPosition.Center.Y)));
-
-                if (!t.getType().isSolid()) {
-                    speed.X = MOVEMENT_SPEED * (float)gameTime.ElapsedGameTime.TotalSeconds;
-                    DIRECTION.X = LEFT;
-                }
-                else {
-                    speed.X = 0;
-                }
+                speed.X = MOVEMENT_SPEED * (float)gameTime.ElapsedGameTime.TotalSeconds;
+                DIRECTION.X = LEFT;
             }
             else if (kbState.IsKeyDown(Keys.W) || kbState.IsKeyDown(Keys.D)) {
-
-                //Block b = getWorld().getBlockAt(Util.getCoordinates(new Vector2(this.ScreenPosition.Right, this.ScreenPosition.Bottom)));
-                //Block t = getWorld().getBlockAt(Util.getCoordinates(new Vector2(this.ScreenPosition.Right, this.ScreenPosition.Center.Y)));
-
-                Block nextBlock = getWorld().getBlockAt(Util.getCoordinates(new Vector2(this.ScreenPosition.Right, this.ScreenPosition.Center.Y)));
-
-                if (!nextBlock.getType().isSolid()) {
-                    speed.X = 300 * (float)gameTime.ElapsedGameTime.TotalSeconds;
-                    DIRECTION.X = RIGHT;
-                }
-                else {
-                    speed.X = 0;
-                    DIRECTION.X = STABLE;
-                }
+                speed.X = 300 * (float)gameTime.ElapsedGameTime.TotalSeconds;
+                DIRECTION.X = RIGHT;
             }
             else {
                 DIRECTION.X = STABLE;
                 speed.X = 0;
             }
 
-            Location leftFoot = Util.getCoordinates(new Vector2(ScreenPosition.Left, ScreenPosition.Bottom));
-            Location rightFoot = Util.getCoordinates(new Vector2(ScreenPosition.Right, ScreenPosition.Bottom));
-            Location rightEar = Util.getCoordinates(new Vector2(ScreenPosition.Right, ScreenPosition.Top));
-            Location leftEar = Util.getCoordinates(new Vector2(ScreenPosition.Left, ScreenPosition.Top));
-            Location above = Util.getCoordinates(new Vector2(ScreenPosition.Center.X, ScreenPosition.Top));
+            float left = ScreenPosition.Left;
+            float right = ScreenPosition.Right;
 
-            if (moveState != MovementState.JUMPING) {
-                if((getWorld().getBlockAt(leftFoot).getType() is Air && getWorld().getBlockAt(rightFoot).getType() is Air) /*|| coordinates.getY() % 1 != 0*/){ 
-                    speed.Y = -4;
-                }
-                else if (moveState == MovementState.WALKING && Keyboard.GetState().IsKeyDown(Keys.Space) && !(getWorld().getBlockAt(leftFoot).getType() is Air) && !(getWorld().getBlockAt(rightFoot).getType() is Air) && !getWorld().getBlockAt(above).getType().isSolid()) {
+            Location leftFoot = Util.getCoordinates(new Vector2(left + 4, ScreenPosition.Bottom));
+            Location rightFoot = Util.getCoordinates(new Vector2(right - 4, ScreenPosition.Bottom));
+            Location rightEar = Util.getCoordinates(new Vector2(right - 4, ScreenPosition.Top));
+            Location leftEar = Util.getCoordinates(new Vector2(left + 4, ScreenPosition.Top));
+            Location above = Util.getCoordinates(new Vector2(ScreenPosition.Center.X, ScreenPosition.Top + 5));
+
+            if (moveState == MovementState.WALKING) {
+                if (Keyboard.GetState().IsKeyDown(Keys.Space) && (getWorld().getBlockAt(leftFoot).getType().isSolid()) && (getWorld().getBlockAt(rightFoot).getType().isSolid()) && !getWorld().getBlockAt(above).getType().isSolid()) {
                     speed.Y = 4;
                     DIRECTION.Y = UP;
                     moveState = MovementState.JUMPING;
@@ -205,10 +186,57 @@ namespace SideCraft {
             }
 
             if (moveState == MovementState.JUMPING && ((coordinates.getY() - this.originalY >= JUMP_HEIGHT) || !(getWorld().getBlockAt(above).getType() is Air))) {
-                moveState = MovementState.WALKING;
+                moveState = MovementState.FALLING;
+                speed.Y = -4;
                 originalY = 0;
             }
+        }
 
+        private void updateCollision() {
+            Location leftFoot = Location.valueOf(ScreenPosition.Left + 2, ScreenPosition.Bottom);
+            Location rightFoot = Location.valueOf(ScreenPosition.Right - 2, ScreenPosition.Bottom);
+
+            Block left = getWorld().getBlockAt(leftFoot);
+            Block right = getWorld().getBlockAt(rightFoot);
+
+            if (moveState == MovementState.WALKING) {
+                if ((!left.getType().isSolid() && !right.getType().isSolid()) /*|| coordinates.getY() % 1 != 0*/) {
+                    speed.Y = -4;
+                    moveState = MovementState.FALLING;
+                }
+            }
+            else if (moveState == MovementState.FALLING) {
+                if (left.getType().isSolid() || right.getType().isSolid()) {
+                    speed.Y = 0;
+                    moveState = MovementState.WALKING;
+                }
+            }
+
+            Block sideBlock, topBlock, botBlock;
+
+            if (DIRECTION.X != STABLE) {
+                if (DIRECTION.X == RIGHT) {
+                    side = Location.valueOf(getBounds().Right + 3, getBounds().Center.Y);
+                    top = Location.valueOf(getBounds().Right + 3, getBounds().Top);
+                    bottom = Location.valueOf(getBounds().Right + 3, getBounds().Bottom);
+                }
+                else if (DIRECTION.X == LEFT) {
+                    side = Location.valueOf(getBounds().Left - 3, getBounds().Center.Y);
+                    top = Location.valueOf(getBounds().Left - 3, getBounds().Top);
+                    bottom = Location.valueOf(getBounds().Left - 3 , getBounds().Bottom);
+                }
+
+                sideBlock = getWorld().getBlockAt(side);
+                topBlock = getWorld().getBlockAt(top);
+                botBlock = getWorld().getBlockAt(bottom);
+
+                if (sideBlock.getType().isSolid() || topBlock.getType().isSolid() || (botBlock.getType().isSolid() && moveState == MovementState.FALLING)) {
+                    DIRECTION.X = 0;
+                }
+            }
+        }
+
+        private void updatePosition() {
             oldX = currentX;
             oldY = currentY;
 
@@ -219,43 +247,9 @@ namespace SideCraft {
             coordinates.modifyY((currentY - oldY) / 32);
         }
 
-        private void updateCollision() {
-            if (DIRECTION.X == RIGHT) {
-                if (speed.Y > 0) {
-                    if (DIRECTION.Y == UP) {
-                        Block above = getWorld().getBlockAt(new Location(coordinates.getX(), coordinates.getY() + 1));
-                        Block front = getWorld().getBlockAt(Util.getCoordinates(new Vector2(this.ScreenPosition.Right, this.ScreenPosition.Center.Y)));
-                        Block topright = getWorld().getBlockAt(new Location(coordinates.getX() + 1, coordinates.getY() + 1));
-
-                        if((getBounds().Intersects(above.getBounds()) && above.getType().isSolid()) || (getBounds().Intersects(front.getBounds()) && front.getType().isSolid()) || (topright.getBounds().Intersects(getBounds()) && topright.getType().isSolid())){ 
-                            moveState = MovementState.WALKING;
-                            speed.X = 0;
-                            coordinates.modifyX(-0.5);
-                        }
-                    }
-                    else if(DIRECTION.Y == DOWN){
-                        Block below = getWorld().getBlockAt(new Location(coordinates.getX(), coordinates.getY() - 1));
-                        Block front = getWorld().getBlockAt(Util.getCoordinates(new Vector2(this.ScreenPosition.Right, this.ScreenPosition.Center.Y)));
-                        Block bottomright = getWorld().getBlockAt(new Location(coordinates.getX() + 1, coordinates.getY() - 1));
-
-                        if(getBounds().Intersects(below.getBounds()) || getBounds().Intersects(front.getBounds()) || bottomright.getBounds().Intersects(getBounds())){ 
-                            speed = Vector2.Zero;
-                        }
-                    }
-                }else{
-                    Block front = getWorld().getBlockAt(new Location(coordinates.getX() + 1, coordinates.getY()));
-
-                    if(getBounds().Intersects(front.getBounds())){
-                        speed.X = 0;
-                    }
-                }
-            }
-        }
-
         public void Draw(SpriteBatch spriteBatch) {
-            //spriteBatch.Draw(texture, ScreenPosition, Color.White);
             Screen.render(coordinates, texture, 32, 32, false);
-            spriteBatch.Draw(getInventory().getAt(getToolbar().getCurrentIndex(), 0).getType().getTexture(), new Vector2(ScreenPosition.X + 20, ScreenPosition.Y + 10), Color.White);
+            spriteBatch.Draw(getInventory().getAt(getToolbar().getCurrentIndex(), 0).getType().getTexture(), new Rectangle(ScreenPosition.Right, ScreenPosition.Top, 16, 16), Color.White);
             toolbar.Draw(spriteBatch);
         }
 
@@ -275,7 +269,7 @@ namespace SideCraft {
             return !(getToolbar().getSelectedObj().getType() is Air) && block.getType() is Air;
         }
 
-        private Rectangle getBounds() {
+        public Rectangle getBounds() {
             return ScreenPosition;
         }
     }

@@ -62,10 +62,12 @@ namespace SideCraft {
         }
 
         public void destroy(){
-            for (int x = 0; x < getType().getDropAmount(); x++) {
-                DropEntity droppedBlock = new DropEntity(this.getType(), new Location(location.getX() + 0.6 * x, location.getY()));
-            }
+            Material material = this.getType();
             setType(Material.AIR);
+
+            for (int x = 0; x < material.getDropAmount(); x++) {
+                DropEntity droppedBlock = new DropEntity(material.getDropType(), new Location(location.getX() + 0.6 * x, location.getY()));
+            }
         }
 
     }

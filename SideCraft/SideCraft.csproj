@@ -112,6 +112,7 @@
   <ItemGroup>
     <Compile Include="entity\DropEntity.cs" />
     <Compile Include="entity\Entity.cs" />
+    <Compile Include="material\Obsidian.cs" />
     <Compile Include="Screen.cs" />
     <Compile Include="world\Location.cs" />
     <Compile Include="inventory\PlayerInventory.cs" />

@@ -6,7 +6,7 @@ using Microsoft.Xna.Framework.Graphics;
 
 namespace SideCraft.material {
     public abstract class Material {
-
+        public static readonly Obsidian OBSIDIAN = new Obsidian();
         public static readonly Dirt DIRT = new Dirt();
         public static readonly Air AIR = new Air();
         public static readonly Grass GRASS = new Grass();

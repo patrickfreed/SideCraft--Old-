@@ -29,6 +29,10 @@ namespace SideCraft {
             this.yLength = (int)(SideCraft.graphics.GraphicsDevice.Viewport.Bounds.Height / 32);
 
             entities = new List<Entity>();
+
+            SideCraft.spriteBatch.Begin();
+            update();
+            SideCraft.spriteBatch.End();
         }
 
         public String getName() {
@@ -69,11 +73,11 @@ namespace SideCraft {
             return blocks[x.ToString() + "," + y.ToString()];
         }
 
-        public void update(SpriteBatch spriteBatch) {
+        public void update() {
             //updateSize();
 
-            Location upperExtreme = new Location(Math.Floor(SideCraft.player.coordinates.getX()) + xLength, Math.Floor(SideCraft.player.coordinates.getY() + yLength));
-            Location lowerExtreme = new Location(Math.Floor(SideCraft.player.coordinates.getX()) - xLength, Math.Floor(SideCraft.player.coordinates.getY() - yLength));
+            Location upperExtreme = new Location(Math.Floor(SideCraft.player.coordinates.getX()) + xLength, Math.Ceiling(SideCraft.player.coordinates.getY() + yLength), this.getName());
+            Location lowerExtreme = new Location(Math.Floor(SideCraft.player.coordinates.getX()) - xLength, Math.Ceiling(SideCraft.player.coordinates.getY() - yLength), this.getName());
 
             int xDistance = (int)Math.Abs(upperExtreme.getX() - lowerExtreme.getX());
             int yDistance = (int)Math.Abs(upperExtreme.getY() - lowerExtreme.getY());
@@ -83,7 +87,7 @@ namespace SideCraft {
                     double xCoord = upperExtreme.getX() + increment(x, (int)upperExtreme.getX(), (int)lowerExtreme.getX());
                     double yCoord = upperExtreme.getY() + increment(y, (int)upperExtreme.getY(), (int)lowerExtreme.getY());
 
-                    getBlockAt(new Location(xCoord, yCoord)).draw();
+                    getBlockAt(new Location(xCoord, yCoord, getName())).draw();
                 }
             }
 
@@ -104,6 +108,11 @@ namespace SideCraft {
             else {
                 return x;
             }
+        }
+
+        public void unregisterEntity(Entity e) {
+            if(entities.Contains(e))
+                entities.Remove(e);
         }
 
         public void registerEntity(Entity e) {

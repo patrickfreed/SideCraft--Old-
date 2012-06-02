@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using Microsoft.Xna.Framework;
 
 namespace SideCraft{
     public class Location{
@@ -18,6 +19,25 @@ namespace SideCraft{
             this.x = x;
             this.y = y;
             this.world = world;
+        }
+
+        public static Location valueOf(Vector2 position){
+            return valueOf(position.X, position.Y);
+        }
+
+        public static Location valueOf(Rectangle rect) {
+            return valueOf(rect.X, rect.Y);
+        }
+
+        public static Location valueOf(float x1, float y1) {
+            double x = (x1 - SideCraft.player.ScreenPosition.X) / 32 + SideCraft.player.coordinates.getX();
+            double y = (y1 - SideCraft.player.ScreenPosition.Y) / -32 + SideCraft.player.coordinates.getY();
+
+            return new Location(x, y);
+        }
+
+        public Location modify(double x, double y) {
+            return new Location(this.x + x, this.y + y, this.world);
         }
 
         public double getX() {

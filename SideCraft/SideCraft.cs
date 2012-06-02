@@ -26,7 +26,7 @@ namespace SideCraft {
 
         public static ContentManager content;
 
-        public static Texture2D grassTile, stoneTile, dirtTile, iron_oreTile, airTile;
+        public static Texture2D grassTile, stoneTile, dirtTile, iron_oreTile, airTile, obsidianTile;
         public static Texture2D selectionTile, toolbarTile;
 
         public static Dictionary<String, World> worlds = new Dictionary<String, World>();
@@ -54,18 +54,19 @@ namespace SideCraft {
 
             font = Content.Load<SpriteFont>("CourierNew");
 
+            stoneTile = Content.Load<Texture2D>("stone");
+            grassTile = Content.Load<Texture2D>("grass");
+            dirtTile = Content.Load<Texture2D>("dirt");
+            iron_oreTile = Content.Load<Texture2D>("iron_ore");
+            airTile = Content.Load<Texture2D>("air");
+            obsidianTile = Content.Load<Texture2D>("obsidian");
+
             player = new Player();
             player.LoadContent(Content.Load<Texture2D>("steve"));
 
             World world = new World("world");
             worlds.Add(world.getName(), world);
             player.world = world.getName();
-
-            stoneTile = Content.Load<Texture2D>("stone");
-            grassTile = Content.Load<Texture2D>("grass");
-            dirtTile = Content.Load<Texture2D>("dirt");
-            iron_oreTile = Content.Load<Texture2D>("iron_ore");
-            airTile = Content.Load<Texture2D>("air");
 
             toolbarTile = Content.Load<Texture2D>("UIContent/toolbar");
             selectionTile = Content.Load<Texture2D>("Mouse/selection");
@@ -92,7 +93,7 @@ namespace SideCraft {
 
             spriteBatch.Begin();
 
-            player.getWorld().update(spriteBatch);
+            player.getWorld().update();
 
             Location mouseCoords = Util.getCoordinates(new Vector2(Mouse.GetState().X, Mouse.GetState().Y));
             Location mouseroofCoords = new Location(mouseCoords.getX(), Math.Ceiling(mouseCoords.getY()));

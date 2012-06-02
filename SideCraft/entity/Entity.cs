@@ -10,6 +10,8 @@ namespace SideCraft.entity {
 
        void draw();
 
+       void destroy();
+
        Location getLocation();
 
        Rectangle getBounds();
