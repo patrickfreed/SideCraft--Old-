@@ -6,7 +6,7 @@ using Microsoft.Xna.Framework;
 
 namespace SideCraft.entity {
    public interface Entity {
-       void update();
+       void update(GameTime time);
 
        void draw();
 

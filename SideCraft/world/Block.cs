@@ -58,7 +58,7 @@ namespace SideCraft {
         }
 
         public Rectangle getBounds() {
-            return Util.getRectangle(location, 32, 32, false);
+            return location.toRectangle(32, 32);
         }
 
         public void destroy(){

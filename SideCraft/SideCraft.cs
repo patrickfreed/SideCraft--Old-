@@ -20,7 +20,11 @@ namespace SideCraft {
         public const int IRON_ORE = 3;
         public const int AIR = 4;
 
+        private bool debugMode = false;
+
         public static Player player;
+
+        public static KeyboardState kbState, oldKbState;
 
         public static SpriteFont font;
 
@@ -76,38 +80,43 @@ namespace SideCraft {
         }
 
         protected override void Update(GameTime gameTime) {
-            if (Keyboard.GetState().IsKeyDown(Keys.Escape))
+            oldKbState = kbState;
+            kbState = Keyboard.GetState();
+            
+            if (kbState.IsKeyDown(Keys.Escape))
                 this.Exit();
 
-            player.Update(gameTime);
+            if (kbState.IsKeyDown(Keys.F5) && !oldKbState.IsKeyDown(Keys.F5)) {
+                if (debugMode) {
+                    debugMode = false;
+                }
+                else {
+                    debugMode = true;
+                }
+            }
+            player.getWorld().update(gameTime);
+            player.update(gameTime);
 
             base.Update(gameTime);
         }
 
         protected override void Draw(GameTime gameTime) {
-            Location loc = new Location(0, 1);
-            float t = Util.getPosition(loc).Y;
-
-
             GraphicsDevice.Clear(Color.CornflowerBlue);
 
-            spriteBatch.Begin();
+            player.getWorld().draw();
+            player.Draw(spriteBatch);
 
-            player.getWorld().update();
-
-            Location mouseCoords = Util.getCoordinates(new Vector2(Mouse.GetState().X, Mouse.GetState().Y));
+            Location mouseCoords = Location.valueOf(Mouse.GetState().X, Mouse.GetState().Y);
             Location mouseroofCoords = new Location(mouseCoords.getX(), Math.Ceiling(mouseCoords.getY()));
+            
             if (Math.Abs(mouseCoords.getX() - player.coordinates.getX()) <= 4 && Math.Abs(mouseCoords.getY() - player.coordinates.getY()) <= 4)
                 Screen.render(player.getWorld().getBlockAt(mouseCoords).getLocation(), selectionTile, 32, 32, false);
 
-            spriteBatch.DrawString(font, "X: " + ((player.coordinates.getX())).ToString() + Environment.NewLine + "Y: " + player.coordinates.getY().ToString() + Environment.NewLine + "Mouse X: " + mouseCoords.getX() + Environment.NewLine + "Mouse Y: " + mouseCoords.getY() + Environment.NewLine + "MousePos.X: " + Mouse.GetState().X + Environment.NewLine + Mouse.GetState().Y + Environment.NewLine + "Y conv" + Util.getPosition(mouseCoords).ToString(), new Vector2(10, 10), Color.Black) ;
-            //spriteBatch.Draw(dirtTile, player.ScreenPosition, Color.Black);
-
-            spriteBatch.DrawString(font, player.getWorld().getBlockAt(mouseCoords).getTypeId().ToString(), Util.getPosition(mouseCoords), Color.White);
-            spriteBatch.DrawString(font, "0", Util.getPosition(new Location(0,0)), Color.White);
-
-            player.Draw(spriteBatch);
-            spriteBatch.End();
+            if (debugMode) {
+                Screen.renderString(font, SideCraft.player.getLocation().toString() + Environment.NewLine + mouseCoords.toString() + Environment.NewLine + "Mouse position" + mouseCoords.toVector2().ToString(), new Vector2(10, 10), Color.Black);
+                Screen.renderString(font, "0", new Location(0, 0).toVector2(), Color.White);
+                
+            }
             base.Draw(gameTime);
         }
     }

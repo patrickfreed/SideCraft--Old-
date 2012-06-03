@@ -30,9 +30,7 @@ namespace SideCraft {
 
             entities = new List<Entity>();
 
-            SideCraft.spriteBatch.Begin();
-            update();
-            SideCraft.spriteBatch.End();
+            draw();
         }
 
         public String getName() {
@@ -73,9 +71,17 @@ namespace SideCraft {
             return blocks[x.ToString() + "," + y.ToString()];
         }
 
-        public void update() {
-            //updateSize();
+        public void update(GameTime time) {
+          updateEntities(time);
+        }
 
+        public void updateEntities(GameTime time) {
+            for (int x = 0; x < entities.Count; x++) {
+                entities[x].update(time);
+            }
+        }
+
+        public void draw() {
             Location upperExtreme = new Location(Math.Floor(SideCraft.player.coordinates.getX()) + xLength, Math.Ceiling(SideCraft.player.coordinates.getY() + yLength), this.getName());
             Location lowerExtreme = new Location(Math.Floor(SideCraft.player.coordinates.getX()) - xLength, Math.Ceiling(SideCraft.player.coordinates.getY() - yLength), this.getName());
 
@@ -90,17 +96,7 @@ namespace SideCraft {
                     getBlockAt(new Location(xCoord, yCoord, getName())).draw();
                 }
             }
-
-            updateEntities();
-
         }
-
-        public void updateEntities() {
-            for (int x = 0; x < entities.Count; x++) {
-                entities[x].update();
-            }
-        }
-
         private int increment(int x, int compare1, int compare2) {
             if (compare1 > compare2) {
                 return -1 * x;

@@ -36,6 +36,23 @@ namespace SideCraft{
             return new Location(x, y);
         }
 
+        public Vector2 toVector2() {
+            double x = (this.x - SideCraft.player.coordinates.getX()) * 32 + SideCraft.player.ScreenPosition.X;
+            double y = SideCraft.player.ScreenPosition.Y - ((this.y - SideCraft.player.coordinates.getY()) * 32);
+
+            return new Vector2((float)x, (float)y);
+        }
+
+        public Rectangle toRectangle(int width, int height) {
+            Vector2 v = toVector2();
+
+            return new Rectangle((int)v.X, (int)v.Y, width, height);
+        }
+
+        public String toString() {
+            return "{X:" + x + String.Empty + " Y:" + y + "}";
+        }
+
         public Location modify(double x, double y) {
             return new Location(this.x + x, this.y + y, this.world);
         }

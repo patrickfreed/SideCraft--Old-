@@ -56,19 +56,19 @@ namespace SideCraft.UI {
             }
         }
 
-        public void Draw(SpriteBatch spriteBatch) {
-            spriteBatch.Draw(SideCraft.toolbarTile, location, Color.White);
+        public void Draw() {
+            Screen.render(location, SideCraft.toolbarTile);
 
             for (int x = 0; x < boxes.Length; x++) {
                 MaterialStack item = SideCraft.player.getInventory().getAt(x, 0);
                 
-                spriteBatch.Draw(item.getType().getTexture(), boxes[x], Color.White);
+                Screen.render(boxes[x], item.getType().getTexture());
 
                 if (x == currentIndex) {
-                    spriteBatch.Draw(this.selectionBox, new Rectangle(boxes[x].X - 3, Y - 3, 35, 34), Color.White);
+                    Screen.render(new Rectangle(boxes[x].X - 3, Y - 3, 35, 34), this.selectionBox);
                 }
                 if (item.getAmount() > 0)
-                    spriteBatch.DrawString(SideCraft.font, SideCraft.player.getInventory().getAt(x, 0).getAmount().ToString(), new Vector2(boxes[x].Center.X + 5, boxes[x].Center.Y - 1), Color.White);
+                    Screen.renderString(SideCraft.font, SideCraft.player.getInventory().getAt(x, 0).getAmount().ToString(), new Vector2(boxes[x].Center.X + 5, boxes[x].Center.Y - 1), Color.White);
             }
         }
     

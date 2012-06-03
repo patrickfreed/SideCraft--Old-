@@ -40,7 +40,7 @@ namespace SideCraft.entity {
             loc.getWorld().registerEntity(this);
         }
 
-        public void update() {
+        public void update(GameTime time) {
             
             Block thisBlock = this.getLocation().getWorld().getBlockAt(this.getLocation());
             if (!thisBlock.getType().isSolid()) {
@@ -77,7 +77,6 @@ namespace SideCraft.entity {
         }
 
         public void draw() {
-
             Screen.render(location, type.getTexture(), WIDTH, HEIGHT, false);
         }
 
@@ -86,7 +85,7 @@ namespace SideCraft.entity {
         }
 
         public Rectangle getBounds() {
-            return Util.getRectangle(location, WIDTH, HEIGHT, false);
+            return location.toRectangle(WIDTH, HEIGHT);
         }
     }
 }

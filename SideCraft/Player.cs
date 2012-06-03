@@ -11,7 +11,7 @@ using SideCraft.inventory;
 using SideCraft.material;
 
 namespace SideCraft {
-    public class Player {
+    public class Player:entity.Entity {
 
         public Rectangle ScreenPosition;
         private Vector2 speed;
@@ -83,7 +83,7 @@ namespace SideCraft {
             texture = t;
         }
 
-        public void Update(GameTime gameTime) {
+        public void update(GameTime gameTime) {
             updateStates();
             updateMovement(gameTime);
             updateCollision();
@@ -111,7 +111,7 @@ namespace SideCraft {
 
         private void updateInteraction(GameTime gameTime) {
             if (Mouse.GetState().LeftButton == ButtonState.Pressed) {
-                Location mouseCoords = Util.getCoordinates(new Vector2(Mouse.GetState().X, Mouse.GetState().Y));
+                Location mouseCoords = Location.valueOf(Mouse.GetState().X, Mouse.GetState().Y);
 
                 milliseconds += (long)gameTime.ElapsedGameTime.TotalMilliseconds;
 
@@ -128,7 +128,7 @@ namespace SideCraft {
                 }
             }
             else if (Mouse.GetState().RightButton == ButtonState.Pressed) {
-                Location mouseCoords = Util.getCoordinates(new Vector2(Mouse.GetState().X, Mouse.GetState().Y));
+                Location mouseCoords = Location.valueOf(Mouse.GetState().X, Mouse.GetState().Y);
                 Block block = getWorld().getBlockAt(mouseCoords);
 
                 if (canPlaceBlock(block)) {
@@ -147,9 +147,6 @@ namespace SideCraft {
          */
 
         private void updateMovement(GameTime gameTime) {
-            Util util = new Util();
-            KeyboardState kbState = Keyboard.GetState();
-
             if (kbState.IsKeyDown(Keys.A) || kbState.IsKeyDown(Keys.S)) {
                 speed.X = MOVEMENT_SPEED * (float)gameTime.ElapsedGameTime.TotalSeconds;
                 DIRECTION.X = LEFT;
@@ -166,11 +163,11 @@ namespace SideCraft {
             float left = ScreenPosition.Left;
             float right = ScreenPosition.Right;
 
-            Location leftFoot = Util.getCoordinates(new Vector2(left + 4, ScreenPosition.Bottom));
-            Location rightFoot = Util.getCoordinates(new Vector2(right - 4, ScreenPosition.Bottom));
-            Location rightEar = Util.getCoordinates(new Vector2(right - 4, ScreenPosition.Top));
-            Location leftEar = Util.getCoordinates(new Vector2(left + 4, ScreenPosition.Top));
-            Location above = Util.getCoordinates(new Vector2(ScreenPosition.Center.X, ScreenPosition.Top + 5));
+            Location leftFoot = Location.valueOf(left + 4, ScreenPosition.Bottom);
+            Location rightFoot = Location.valueOf(right - 4, ScreenPosition.Bottom);
+            Location rightEar = Location.valueOf(right - 4, ScreenPosition.Top);
+            Location leftEar = Location.valueOf(left + 4, ScreenPosition.Top);
+            Location above = Location.valueOf(ScreenPosition.Center.X, ScreenPosition.Top + 5);
 
             if (moveState == MovementState.WALKING) {
                 if (Keyboard.GetState().IsKeyDown(Keys.Space) && (getWorld().getBlockAt(leftFoot).getType().isSolid()) && (getWorld().getBlockAt(rightFoot).getType().isSolid()) && !getWorld().getBlockAt(above).getType().isSolid()) {
@@ -249,8 +246,8 @@ namespace SideCraft {
 
         public void Draw(SpriteBatch spriteBatch) {
             Screen.render(coordinates, texture, 32, 32, false);
-            spriteBatch.Draw(getInventory().getAt(getToolbar().getCurrentIndex(), 0).getType().getTexture(), new Rectangle(ScreenPosition.Right, ScreenPosition.Top, 16, 16), Color.White);
-            toolbar.Draw(spriteBatch);
+            Screen.render(new Rectangle(ScreenPosition.Right, ScreenPosition.Top, 16, 16),getInventory().getAt(getToolbar().getCurrentIndex(), 0).getType().getTexture());
+            toolbar.Draw();
         }
 
         public PlayerInventory getInventory() {
@@ -271,6 +268,18 @@ namespace SideCraft {
 
         public Rectangle getBounds() {
             return ScreenPosition;
+        }
+
+        public Location getLocation() {
+            return this.coordinates;
+        }
+
+        public void draw() {
+            Draw(SideCraft.spriteBatch);
+        }
+
+        public void destroy() {
+            //Todo
         }
     }
 }
