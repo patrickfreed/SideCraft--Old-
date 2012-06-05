@@ -10,7 +10,7 @@ namespace SideCraft.material {
         const int DURABILITY = 45;
         
         public override int getId() {
-            return SideCraft.IRON_ORE;
+            return Settings.IRON_ORE;
         }
 
         public override int getMaxStackSize() {

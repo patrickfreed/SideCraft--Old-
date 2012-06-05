@@ -30,15 +30,15 @@ namespace SideCraft{
         }
 
         public static Location valueOf(float x1, float y1) {
-            double x = (x1 - SideCraft.player.ScreenPosition.X) / 32 + SideCraft.player.coordinates.getX();
-            double y = (y1 - SideCraft.player.ScreenPosition.Y) / -32 + SideCraft.player.coordinates.getY();
+            double x = (x1 - SideCraft.player.ScreenPosition.X) / Settings.BLOCK_SIZE + SideCraft.player.coordinates.getX();
+            double y = (y1 - SideCraft.player.ScreenPosition.Y) / -Settings.BLOCK_SIZE + SideCraft.player.coordinates.getY();
 
             return new Location(x, y);
         }
 
         public Vector2 toVector2() {
-            double x = (this.x - SideCraft.player.coordinates.getX()) * 32 + SideCraft.player.ScreenPosition.X;
-            double y = SideCraft.player.ScreenPosition.Y - ((this.y - SideCraft.player.coordinates.getY()) * 32);
+            double x = (this.x - SideCraft.player.coordinates.getX()) * Settings.BLOCK_SIZE + SideCraft.player.ScreenPosition.X;
+            double y = SideCraft.player.ScreenPosition.Y - ((this.y - SideCraft.player.coordinates.getY()) * Settings.BLOCK_SIZE);
 
             return new Vector2((float)x, (float)y);
         }

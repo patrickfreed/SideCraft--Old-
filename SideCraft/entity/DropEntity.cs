@@ -11,23 +11,29 @@ namespace SideCraft.entity {
         private readonly Material type;
         private Location location;
 
-        const int WIDTH = 15, HEIGHT = 15;
+        readonly int WIDTH = 15, HEIGHT = 15;
 
         public DropEntity(Material t, Location loc) {
+            HEIGHT = Settings.BLOCK_SIZE / 2;
+            WIDTH = Settings.BLOCK_SIZE / 2;
             spawn(loc);
             type = t;
         }
 
         public DropEntity(Material t, double x, double y, World world) {
             location = new Location(x, y, world.getName());
-            type = t;
+            type = t; HEIGHT = Settings.BLOCK_SIZE / 2;
+            WIDTH = Settings.BLOCK_SIZE / 2;
+
+
             spawn(location);
         }
 
         public DropEntity(Material t, double x, double y) {
+            HEIGHT = Settings.BLOCK_SIZE / 2;
+            WIDTH = Settings.BLOCK_SIZE / 2;
             type = t;
             Location location = new Location(x, y);
-
             spawn(location);
         }
 
@@ -63,8 +69,6 @@ namespace SideCraft.entity {
                     location.modifyX(-0.2);
                 }
             }
-
-            draw();
 
             if(getBounds().Intersects(SideCraft.player.getBounds())){
                 destroy();

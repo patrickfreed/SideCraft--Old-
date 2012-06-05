@@ -25,8 +25,8 @@ namespace SideCraft {
             this.name = n;
             this.blocks = new Dictionary<string, Block>();
             this.util = new Util();
-            this.xLength = (int)(SideCraft.graphics.GraphicsDevice.Viewport.Bounds.Width / 32);
-            this.yLength = (int)(SideCraft.graphics.GraphicsDevice.Viewport.Bounds.Height / 32);
+            this.xLength = (int)(SideCraft.graphics.GraphicsDevice.Viewport.Bounds.Width / Settings.BLOCK_SIZE);
+            this.yLength = (int)(SideCraft.graphics.GraphicsDevice.Viewport.Bounds.Height / Settings.BLOCK_SIZE);
 
             entities = new List<Entity>();
 
@@ -82,8 +82,8 @@ namespace SideCraft {
         }
 
         public void draw() {
-            Location upperExtreme = new Location(Math.Floor(SideCraft.player.coordinates.getX()) + xLength, Math.Ceiling(SideCraft.player.coordinates.getY() + yLength), this.getName());
-            Location lowerExtreme = new Location(Math.Floor(SideCraft.player.coordinates.getX()) - xLength, Math.Ceiling(SideCraft.player.coordinates.getY() - yLength), this.getName());
+            Location upperExtreme = new Location(Math.Floor(SideCraft.player.coordinates.getX()) + xLength / 2 + 1, Math.Ceiling((SideCraft.player.coordinates.getY() + yLength / 2) + 1), this.getName());
+            Location lowerExtreme = new Location(Math.Floor(SideCraft.player.coordinates.getX()) - xLength / 2 - 1, Math.Ceiling((SideCraft.player.coordinates.getY() - yLength / 2) - 1), this.getName());
 
             int xDistance = (int)Math.Abs(upperExtreme.getX() - lowerExtreme.getX());
             int yDistance = (int)Math.Abs(upperExtreme.getY() - lowerExtreme.getY());
@@ -96,7 +96,12 @@ namespace SideCraft {
                     getBlockAt(new Location(xCoord, yCoord, getName())).draw();
                 }
             }
+
+            for (int x = 0; x < entities.Count; x++) {
+                entities[x].draw();
+            }
         }
+        
         private int increment(int x, int compare1, int compare2) {
             if (compare1 > compare2) {
                 return -1 * x;

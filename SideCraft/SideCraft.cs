@@ -9,7 +9,7 @@ using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
 using Microsoft.Xna.Framework.Media;
 using SideCraft;
-using SideCraft.UI;
+using SideCraft.menu;
 
 namespace SideCraft {
     public class SideCraft : Microsoft.Xna.Framework.Game {
@@ -19,8 +19,6 @@ namespace SideCraft {
         public const int STONE = 2;
         public const int IRON_ORE = 3;
         public const int AIR = 4;
-
-        private bool debugMode = false;
 
         public static Player player;
 
@@ -87,11 +85,11 @@ namespace SideCraft {
                 this.Exit();
 
             if (kbState.IsKeyDown(Keys.F5) && !oldKbState.IsKeyDown(Keys.F5)) {
-                if (debugMode) {
-                    debugMode = false;
+                if (Settings.DEBUG) {
+                    Settings.DEBUG = false;
                 }
                 else {
-                    debugMode = true;
+                    Settings.DEBUG = true;
                 }
             }
             player.getWorld().update(gameTime);
@@ -101,7 +99,7 @@ namespace SideCraft {
         }
 
         protected override void Draw(GameTime gameTime) {
-            GraphicsDevice.Clear(Color.CornflowerBlue);
+            GraphicsDevice.Clear(Color.CadetBlue);
 
             player.getWorld().draw();
             player.Draw(spriteBatch);
@@ -110,9 +108,9 @@ namespace SideCraft {
             Location mouseroofCoords = new Location(mouseCoords.getX(), Math.Ceiling(mouseCoords.getY()));
             
             if (Math.Abs(mouseCoords.getX() - player.coordinates.getX()) <= 4 && Math.Abs(mouseCoords.getY() - player.coordinates.getY()) <= 4)
-                Screen.render(player.getWorld().getBlockAt(mouseCoords).getLocation(), selectionTile, 32, 32, false);
+                Screen.render(player.getWorld().getBlockAt(mouseCoords).getLocation(), selectionTile, Settings.BLOCK_SIZE, Settings.BLOCK_SIZE, false);
 
-            if (debugMode) {
+            if (Settings.DEBUG) {
                 Screen.renderString(font, SideCraft.player.getLocation().toString() + Environment.NewLine + mouseCoords.toString() + Environment.NewLine + "Mouse position" + mouseCoords.toVector2().ToString(), new Vector2(10, 10), Color.Black);
                 Screen.renderString(font, "0", new Location(0, 0).toVector2(), Color.White);
                 

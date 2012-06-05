@@ -6,7 +6,7 @@ using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework;
 using SideCraft.material;
 
-namespace SideCraft.UI {
+namespace SideCraft.menu {
     public class Toolbar {
         private int currentIndex;
 

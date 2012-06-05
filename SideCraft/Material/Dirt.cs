@@ -11,7 +11,7 @@ namespace SideCraft.material {
         const int DURABILITY = 15;
 
         public override int getId() {
-            return SideCraft.DIRT;
+            return Settings.DIRT;
         }
 
         public override int getMaxStackSize(){

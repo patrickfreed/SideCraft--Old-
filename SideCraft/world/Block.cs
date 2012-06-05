@@ -43,7 +43,7 @@ namespace SideCraft {
         }
 
         public void draw() {
-            Screen.render(getLocation(), getType().getTexture(), 32, 32, false);
+            Screen.render(getLocation(), getType().getTexture(), Settings.BLOCK_SIZE, Settings.BLOCK_SIZE, false);
         }
 
         public int getHealth() {

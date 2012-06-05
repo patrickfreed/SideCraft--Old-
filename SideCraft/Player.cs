@@ -6,7 +6,7 @@ using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
 using Microsoft.Xna.Framework;
 using SideCraft;
-using SideCraft.UI;
+using SideCraft.menu;
 using SideCraft.inventory;
 using SideCraft.material;
 
@@ -31,14 +31,13 @@ namespace SideCraft {
         private MovementState moveState;
 
         const double JUMP_HEIGHT = 1.3;
-        const int LEFT = -1, UP = 1, RIGHT = 1, DOWN = -1, MOVEMENT_SPEED = 300, STABLE = 0, ARM_LENGTH = 4;
+        const int LEFT = -1, UP = 1, RIGHT = 1, DOWN = -1, STABLE = 0, ARM_LENGTH = 4;
 
+        private int MOVEMENT_SPEED;
         float startX, startY, currentX, currentY, oldX, oldY;
 
         private static MouseState oldMouseState, mouseState;
         private static KeyboardState oldKbState, kbState;
-
-        Location top, side, bottom;
 
         public String world;
 
@@ -56,8 +55,8 @@ namespace SideCraft {
         }
 
         public Player() {
-
-            ScreenPosition = new Rectangle(388, 224, 30, 32);
+            MOVEMENT_SPEED = Settings.BLOCK_SIZE * 10;
+            ScreenPosition = new Rectangle(388, 224, Settings.BLOCK_SIZE, Settings.BLOCK_SIZE);
 
             startX = 388f;
             startY = 224f;
@@ -152,7 +151,7 @@ namespace SideCraft {
                 DIRECTION.X = LEFT;
             }
             else if (kbState.IsKeyDown(Keys.W) || kbState.IsKeyDown(Keys.D)) {
-                speed.X = 300 * (float)gameTime.ElapsedGameTime.TotalSeconds;
+                speed.X = MOVEMENT_SPEED * (float)gameTime.ElapsedGameTime.TotalSeconds;
                 DIRECTION.X = RIGHT;
             }
             else {
@@ -163,11 +162,11 @@ namespace SideCraft {
             float left = ScreenPosition.Left;
             float right = ScreenPosition.Right;
 
-            Location leftFoot = Location.valueOf(left + 4, ScreenPosition.Bottom);
-            Location rightFoot = Location.valueOf(right - 4, ScreenPosition.Bottom);
-            Location rightEar = Location.valueOf(right - 4, ScreenPosition.Top);
-            Location leftEar = Location.valueOf(left + 4, ScreenPosition.Top);
-            Location above = Location.valueOf(ScreenPosition.Center.X, ScreenPosition.Top + 5);
+            Location leftFoot = Location.valueOf(left + Settings.BLOCK_SIZE/8, ScreenPosition.Bottom);
+            Location rightFoot = Location.valueOf(right - Settings.BLOCK_SIZE / 8, ScreenPosition.Bottom);
+            Location rightEar = Location.valueOf(right - Settings.BLOCK_SIZE / 8, ScreenPosition.Top);
+            Location leftEar = Location.valueOf(left + Settings.BLOCK_SIZE / 8, ScreenPosition.Top);
+            Location above = Location.valueOf(ScreenPosition.Center.X, ScreenPosition.Top + Settings.BLOCK_SIZE / 8);
 
             if (moveState == MovementState.WALKING) {
                 if (Keyboard.GetState().IsKeyDown(Keys.Space) && (getWorld().getBlockAt(leftFoot).getType().isSolid()) && (getWorld().getBlockAt(rightFoot).getType().isSolid()) && !getWorld().getBlockAt(above).getType().isSolid()) {
@@ -190,8 +189,8 @@ namespace SideCraft {
         }
 
         private void updateCollision() {
-            Location leftFoot = Location.valueOf(ScreenPosition.Left + 2, ScreenPosition.Bottom);
-            Location rightFoot = Location.valueOf(ScreenPosition.Right - 2, ScreenPosition.Bottom);
+            Location leftFoot = Location.valueOf(ScreenPosition.Left + Settings.BLOCK_SIZE / 16, ScreenPosition.Bottom);
+            Location rightFoot = Location.valueOf(ScreenPosition.Right - Settings.BLOCK_SIZE / 16, ScreenPosition.Bottom);
 
             Block left = getWorld().getBlockAt(leftFoot);
             Block right = getWorld().getBlockAt(rightFoot);
@@ -210,17 +209,18 @@ namespace SideCraft {
             }
 
             Block sideBlock, topBlock, botBlock;
+            Location top, side, bottom; 
 
             if (DIRECTION.X != STABLE) {
                 if (DIRECTION.X == RIGHT) {
-                    side = Location.valueOf(getBounds().Right + 3, getBounds().Center.Y);
-                    top = Location.valueOf(getBounds().Right + 3, getBounds().Top);
-                    bottom = Location.valueOf(getBounds().Right + 3, getBounds().Bottom);
+                    side = Location.valueOf(getBounds().Right + Settings.BLOCK_SIZE / 8, getBounds().Center.Y);
+                    top = Location.valueOf(getBounds().Right + Settings.BLOCK_SIZE / 8, getBounds().Top);
+                    bottom = Location.valueOf(getBounds().Right + Settings.BLOCK_SIZE / 8, getBounds().Bottom);
                 }
-                else if (DIRECTION.X == LEFT) {
-                    side = Location.valueOf(getBounds().Left - 3, getBounds().Center.Y);
-                    top = Location.valueOf(getBounds().Left - 3, getBounds().Top);
-                    bottom = Location.valueOf(getBounds().Left - 3 , getBounds().Bottom);
+                else { //left
+                    side = Location.valueOf(getBounds().Left - Settings.BLOCK_SIZE / 8, getBounds().Center.Y);
+                    top = Location.valueOf(getBounds().Left - Settings.BLOCK_SIZE / 8, getBounds().Top);
+                    bottom = Location.valueOf(getBounds().Left - Settings.BLOCK_SIZE / 8, getBounds().Bottom);
                 }
 
                 sideBlock = getWorld().getBlockAt(side);
@@ -245,7 +245,7 @@ namespace SideCraft {
         }
 
         public void Draw(SpriteBatch spriteBatch) {
-            Screen.render(coordinates, texture, 32, 32, false);
+            Screen.render(coordinates, texture, Settings.BLOCK_SIZE, Settings.BLOCK_SIZE, false);
             Screen.render(new Rectangle(ScreenPosition.Right, ScreenPosition.Top, 16, 16),getInventory().getAt(getToolbar().getCurrentIndex(), 0).getType().getTexture());
             toolbar.Draw();
         }
